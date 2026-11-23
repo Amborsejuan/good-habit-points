@@ -106,6 +106,8 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .pad button{padding:14px;font-size:22px}
 .banner{background:#fff3cd;color:#7a5b00;border-radius:12px;padding:8px 12px;font-size:13px;margin-bottom:10px}
+.p-bar{position:sticky;top:8px;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:8px;background:#ffd166;color:#1d1d1d;border:2.5px solid #1d1d1d;border-radius:14px;padding:8px 12px;font-size:14px;font-weight:800;margin-bottom:12px;box-shadow:3px 3px 0 #1d1d1d}
+.p-bar.warn{background:#ffccd0;color:#9b111e}
 .empty{text-align:center;padding:30px 10px}
 .empty svg{width:140px;height:140px}
 .list-edit li{display:flex;gap:6px;align-items:center;margin-bottom:6px}
@@ -213,6 +215,11 @@ function fmtRemain(){
   const s=Math.max(0,Math.ceil((UI.parentUntil-Date.now())/1000));
   return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
 }
+function fmtRemainCN(){
+  const s=Math.max(0,Math.ceil((UI.parentUntil-Date.now())/1000));
+  const m=Math.floor(s/60), r=s%60;
+  return m>0?`${m} 分 ${String(r).padStart(2,'0')} 秒`:`${r} 秒`;
+}
 function enterParent(after,msg='已進入家長模式（3 分鐘後自動鎖定）'){
   UI.parent=true; UI.parentUntil=Date.now()+PARENT_TTL;
   UI.modal=after==='settings'?{type:'settings'}:null; UI.after=null; UI.pinBuf='';
@@ -225,8 +232,11 @@ function exitParent(msg='已離開家長模式'){
 }
 function checkParentTimeout(){
   if(!UI.parent) return;
-  if(Date.now()>=UI.parentUntil) return exitParent('家長模式已超過 3 分鐘自動鎖定，請重新驗證');
+  const rem=UI.parentUntil-Date.now();
+  if(rem<=0) return exitParent('家長模式已超過 3 分鐘自動鎖定，請重新驗證');
   const el=$('#pTimer'); if(el) el.textContent=fmtRemain();
+  const el2=$('#pTimerBar'); if(el2) el2.textContent=fmtRemainCN();
+  const bar=$('.p-bar'); if(bar) bar.classList.toggle('warn',rem<=30000);
 }
 setInterval(checkParentTimeout,1000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) checkParentTimeout(); });
@@ -324,6 +334,7 @@ function _render(){
   let h=`<header><h1>${THEME_TITLES[th]||'好習慣集點樂園'}</h1>
     <button class="btn sm ${UI.parent?'pri':''}" data-act="lock">${UI.parent?`🔓 家長 <span id="pTimer">${fmtRemain()}</span>`:'🔒 家長'}</button>
     ${UI.parent?'<button class="btn sm" data-act="settings">⚙️</button>':''}</header>`;
+  if(UI.parent) h+=`<div class="p-bar ${(UI.parentUntil-Date.now())<=30000?'warn':''}"><span>⏱️ 家長模式還有 <b id="pTimerBar">${fmtRemainCN()}</b> 自動登出</span><button class="btn sm" style="padding:4px 10px" data-act="lock">立即鎖定</button></div>`;
   if(offline) h+=`<div class="banner">目前連不上網路，剛剛的變更會先存在這台裝置，恢復連線後自動同步。</div>`;
   if(slow&&loading) h+=`<div class="banner">雲端資料還在連線中，請稍候…</div>`;
   if(loading&&!slow){app.innerHTML=h+'<div class="empty muted">載入中…</div>';return;}
