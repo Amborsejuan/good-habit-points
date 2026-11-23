@@ -71,6 +71,10 @@ body[data-theme=cloud] .rw{border:2px solid var(--line)}
 .rw .rw-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .rw .rw-btns .btn{margin-top:0;flex:1;min-width:60px;padding:6px 6px;font-size:12px}
 .log{list-style:none;margin:0;padding:0}
+.logs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:10px}
+.log-col{background:var(--bg);border:var(--bw) solid var(--line);border-radius:16px;padding:12px}
+.log-col h3{margin:0 0 8px;font-size:16px;font-weight:900;display:flex;align-items:center;gap:6px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.log-col h3 svg,.log-col h3 img{width:28px;height:28px}
 .log li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px dashed var(--line)}
 body[data-theme=comic] .log li,body[data-theme=snoopy] .log li,body[data-theme=pochacco] .log li,body[data-theme=cinnamoroll] .log li{border-bottom:1.5px dashed #bdb29a}
 .log .d{font-weight:900;min-width:54px;text-align:center;border-radius:10px;padding:4px 0;color:#fff}
@@ -112,7 +116,7 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
 @keyframes pop{40%{transform:scale(1.25)}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700;z-index:98;font-size:14px}
 .sec-title{font-weight:900;margin:14px 0 6px}
-@media(max-width:520px){.kids-grid{grid-template-columns:1fr}.hero .mascot{width:96px;height:96px}.hero .num{font-size:52px}body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num,body[data-theme=pochacco] .hero .num,body[data-theme=cinnamoroll] .hero .num{font-size:62px}}
+@media(max-width:520px){.kids-grid,.logs-grid{grid-template-columns:1fr}.hero .mascot{width:96px;height:96px}.hero .num{font-size:52px}body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num,body[data-theme=pochacco] .hero .num,body[data-theme=cinnamoroll] .hero .num{font-size:62px}}
 </style>
 </head>
 <body data-theme="pochacco">
@@ -307,15 +311,17 @@ function _render(){
     }).join('')}</div>`;
   h+=`</div>`;
 
-  // 紀錄（預設同一頁顯示所有孩子，可篩選單一孩子）
-  const kidMap=Object.fromEntries(S.kids.map(x=>[x.id,x.name]));
-  const mine=S.logs.filter(l=>(UI.logKid==='all'||l.kidId===UI.logKid)&&(UI.filter==='all'||l.type===UI.filter));
+  // 紀錄（每位孩子分格並排顯示，清晰不混雜）
   h+=`<div class="card"><h2>📒 點數紀錄</h2>
-    <div class="filters"><button class="chip ${UI.logKid==='all'?'on':''}" data-logkid="all">全部孩子</button>${S.kids.map(x=>`<button class="chip ${UI.logKid===x.id?'on':''}" data-logkid="${x.id}">${esc(x.name)}</button>`).join('')}</div>
     <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
-    ${mine.length?`<ul class="log">${mine.slice(0,100).map(l=>{const who=whoOf(l),kname=kidMap[l.kidId]||'';return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
-      <span class="t"><b>${kname?`<span class="kid-tag">${esc(kname)}</span>`:''}${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
-      ${UI.parent?`<button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button>`:''}</li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
+    <div class="logs-grid">${S.kids.map(x=>{
+      const mine=S.logs.filter(l=>l.kidId===x.id&&(UI.filter==='all'||l.type===UI.filter));
+      return `<div class="log-col"><h3>${face(x)}${esc(x.name)} 的點數紀錄</h3>
+        ${mine.length?`<ul class="log">${mine.slice(0,50).map(l=>{const who=whoOf(l);return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
+          <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
+          ${UI.parent?`<button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button>`:''}</li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
+      </div>`;
+    }).join('')}</div>
   </div>`;
   app.innerHTML=h+modalHtml();
 }
