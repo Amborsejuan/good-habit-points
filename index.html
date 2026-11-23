@@ -170,7 +170,45 @@ const THEMES={pochacco:'🐶 帕洽狗',snoopy:'🐾 史努比',cloud:'☁️ �
 const THEME_TITLES={pochacco:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',cinnamoroll:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',snoopy:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',comic:'GOOD HABIT POINTS!',cloud:'好習慣集點樂園'};
 
 /* ---------- 狀態 ---------- */
-const DEFAULT_CONFIG={pin:'0000',presets:{add:['自己刷牙洗臉','整理玩具','準時上床睡覺','完成功課','幫忙做家事','有禮貌說謝謝','吃完飯不挑食'],sub:['亂發脾氣','拖拖拉拉','說謊','打架/推人','超過3C時間']}};
+const DEFAULT_CONFIG={pin:'0000',presets:{
+  add:['準時早起出門:2','自己刷牙洗臉:1','整理玩具書包:1','主動完成功課:2','準時上床睡覺:2','幫忙做家事:2','吃完飯不挑食:1','有禮貌說謝謝:1'],
+  sub:['晚起拖拉出門遲到:2','超過3C時間:2','亂發脾氣哭鬧:2','打架/推人:3','說謊:3','拖拖拉拉沒收東西:1']
+}};
+function parsePreset(s){const m=String(s||'').match(/^(.*?)[:：]\s*(\d+)\s*$/);return m?{text:m[1].trim(),pts:Math.max(1,parseInt(m[2])||1)}:{text:String(s||'').trim(),pts:null};}
+const BIO_KEY='habit_points_bio_cred_v1';
+const bioSupported=()=>!!(window.PublicKeyCredential&&navigator.credentials&&(location.protocol==='https:'||location.hostname==='localhost'));
+const hasBio=()=>!!localStorage.getItem(BIO_KEY);
+const b64ToBuf=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const bufToB64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+async function setupBio(){
+  if(!bioSupported()) return toast('此瀏覽器或不支援 Face ID / 指紋');
+  try{
+    const ch=crypto.getRandomValues(new Uint8Array(32));
+    const uid=new TextEncoder().encode(myEmail()||'parent');
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge:ch, rp:{name:'好習慣集點樂園',id:location.hostname},
+      user:{id:uid,name:myEmail()||'parent',displayName:actorName()},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'}, timeout:60000
+    }});
+    localStorage.setItem(BIO_KEY,bufToB64(cred.rawId));
+    toast('✅ 已啟用本裝置 Face ID / 指紋解鎖！'); render();
+  }catch(e){ toast(e.name==='NotAllowedError'?'已取消生物辨識設定':'設定失敗：'+(e.message||e.name)); }
+}
+function disableBio(){ localStorage.removeItem(BIO_KEY); toast('已停用本裝置生物辨識'); render(); }
+async function unlockBio(){
+  const id=localStorage.getItem(BIO_KEY); if(!id) return;
+  try{
+    const ch=crypto.getRandomValues(new Uint8Array(32));
+    await navigator.credentials.get({publicKey:{
+      challenge:ch, rpId:location.hostname,
+      allowCredentials:[{id:b64ToBuf(id),type:'public-key'}],
+      userVerification:'required', timeout:60000
+    }});
+    UI.parent=true; UI.modal=UI.after==='settings'?{type:'settings'}:null; UI.after=null; UI.pinBuf='';
+    toast('🔓 Face ID / 指紋驗證成功！'); render();
+  }catch(e){ if(e.name!=='NotAllowedError') toast('生物辨識驗證失敗，請改用密碼'); }
+}
 let S={config:null,kids:[],rewards:[],logs:[],avatars:{},ready:{c:false,k:false,r:false,l:false}};
 let UI={kid:null,parent:false,mode:'add',amt:1,reason:'',filter:'all',logKid:'all',modal:null,pinBuf:'',edit:null};
 let db=null, offline=false, loadTimer=null, slow=false;
@@ -293,8 +331,8 @@ function _render(){
       <div class="muted">點數</div>
       <div class="amts">${[1,2,3,5,10].map(n=>`<button class="chip ${UI.amt==n?'on':''}" data-amt="${n}">${n}</button>`).join('')}
         <input id="amtIn" type="number" min="1" value="${UI.amt}" style="width:80px;flex:none"></div>
-      <div class="muted">原因（點選常用或自行輸入）</div>
-      <div class="filters" style="margin:6px 0">${P.map(p=>`<button class="chip ${UI.mode}" data-preset="${esc(p)}">${esc(p)}</button>`).join('')}</div>
+      <div class="muted">原因（點選常用會自動帶入預設分數，上方分數仍可自由調整）</div>
+      <div class="filters" style="margin:6px 0">${P.map(raw=>{const p=parsePreset(raw);return `<button class="chip ${UI.mode}" data-preset="${esc(p.text)}" ${p.pts?`data-ppts="${p.pts}"`:''}>${esc(p.text)}${p.pts?` <b style="color:${UI.mode==='add'?'var(--ok)':'var(--bad)'}">${UI.mode==='add'?'+':'−'}${p.pts}</b>`:''}</button>`;}).join('')}</div>
       <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">幫 ${esc(k.name)} ${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
     </div>`;
   }
@@ -340,7 +378,8 @@ function authHtml(){
 }
 function modalHtml(){
   const m=UI.modal; if(!m) return '';
-  if(m.type==='pin') return `<div class="modal" data-close="1"><div class="card" style="text-align:center"><h2 style="justify-content:center">🔒 輸入家長密碼</h2>
+  if(m.type==='pin') return `<div class="modal" data-close="1"><div class="card" style="text-align:center"><h2 style="justify-content:center">🔒 進入家長模式</h2>
+    ${hasBio()&&bioSupported()?`<button class="btn pri" data-act="unlockBio" style="width:100%;margin-bottom:10px;font-size:16px">🪪 使用 Face ID / 指紋解鎖</button>`:''}
     <div class="pin">${[0,1,2,3].map(i=>`<span class="${UI.pinBuf.length>i?'f':''}"></span>`).join('')}</div>
     <div class="pad">${[1,2,3,4,5,6,7,8,9,'C',0,'⌫'].map(n=>`<button class="btn" data-pin="${n}">${n}</button>`).join('')}</div>
     <p class="muted" style="margin-top:10px">${m.err?'<span style="color:var(--bad)">密碼錯誤，請重試</span>':(String(cfg().pin||'0000')==='0000'?'預設密碼：0000（進入後可在 ⚙️ 修改）':'請輸入 4 位數家長密碼')}</p>
@@ -358,10 +397,12 @@ function modalHtml(){
     <div class="row"><input id="newKid" placeholder="孩子名字"><select id="newKidTheme" style="width:148px">${Object.entries(THEMES).map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select><button class="btn sm pri" style="flex:none" data-act="addKid">新增</button></div>
     <div class="sec-title">🎁 獎品</div><ul class="list-edit">${S.rewards.map(r=>`<li><input data-remoji="${r.id}" value="${esc(r.emoji||'')}" style="width:54px;flex:none"><input data-rname="${r.id}" value="${esc(r.name)}"><input data-rcost="${r.id}" type="number" value="${r.cost}" style="width:74px;flex:none"><button class="btn sm bad" data-rdel="${r.id}">刪</button></li>`).join('')}</ul>
     <div class="row"><input id="newREmoji" placeholder="🎁" style="width:54px;flex:none"><input id="newRName" placeholder="獎品名稱"><input id="newRCost" type="number" placeholder="點數" style="width:74px;flex:none"><button class="btn sm pri" style="flex:none" data-act="addReward">新增</button></div>
-    <div class="sec-title">➕ 常用加點原因（每行一個）</div><textarea id="presetAdd" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.add.join('\n'))}</textarea>
-    <div class="sec-title">➖ 常用扣點原因（每行一個）</div><textarea id="presetSub" rows="3" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.sub.join('\n'))}</textarea>
+    <div class="sec-title" style="display:flex;align-items:center;justify-content:space-between"><span>➕ 常用加點原因（可加 :點數）</span><button class="btn sm" data-act="loadDefaultPresets">套用預設分數</button></div><textarea id="presetAdd" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.add.join('\n'))}</textarea>
+    <div class="sec-title">➖ 常用扣點原因（可加 :點數，如：晚起拖拉出門遲到:2）</div><textarea id="presetSub" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.sub.join('\n'))}</textarea>
     <div class="sec-title">🔑 家長密碼（4 位數字，儲存後全家同步生效）</div>
     <div class="row"><input id="pinIn" inputmode="numeric" maxlength="4" placeholder="請輸入 4 位數字" value="${esc(c.pin)}"><button class="btn sm pri" style="flex:none" data-act="savePin">儲存密碼</button></div>
+    <div class="sec-title">🪪 Face ID / 指紋快速解鎖（此裝置專屬）</div>
+    <div class="row">${hasBio()?`<span class="muted" style="color:var(--ok);font-weight:700">✅ 已啟用本裝置生物辨識</span><button class="btn sm bad" style="flex:none" data-act="disableBio">停用</button>`:`<button class="btn sm pri" data-act="setupBio">✨ 啟用本裝置 Face ID / 指紋</button>`}</div>
     <div class="sec-title">👤 帳號與稱呼（點數紀錄會顯示由誰加減）</div>
     <div class="row" style="margin-bottom:6px"><input id="myNick" placeholder="例如：爸爸、媽媽" value="${esc((c.nicknames&&c.nicknames[myEmail()])||AUTH.user?.name||'')}"><button class="btn sm" style="flex:none" data-act="signout">登出</button></div>
     <div class="muted" style="margin-bottom:6px">目前登入：${esc(AUTH.user?.email||'')}</div>
@@ -384,7 +425,7 @@ document.addEventListener('click',async e=>{
   if(d.logkid){UI.logKid=d.logkid;return render();}
   if(d.mode){UI.mode=d.mode;UI.reason='';return render();}
   if(d.amt){UI.amt=+d.amt;keepReason();return render();}
-  if(d.preset){UI.reason=d.preset;return render();}
+  if(d.preset){UI.reason=d.preset;if(d.ppts)UI.amt=+d.ppts;return render();}
   if(d.filter){UI.filter=d.filter;return render();}
   if(d.redeem) return redeem(d.redeem,d.rkid);
   if(d.undo) return undoLog(d.undo);
@@ -398,15 +439,19 @@ document.addEventListener('click',async e=>{
   if(d.rdel){await del('rewards',d.rdel);return render();}
   if(d.avdel){ if(db) await db.collection('avatars').doc(d.avdel).delete(); delete S.avatars[d.avdel]; toast('已改回預設角色'); return render(); }
   switch(d.act){
-    case 'lock': if(UI.parent){UI.parent=false;toast('已離開家長模式');}else{UI.modal={type:'pin'};UI.pinBuf='';} return render();
+    case 'lock': if(UI.parent){UI.parent=false;toast('已離開家長模式');return render();} UI.modal={type:'pin'};UI.pinBuf=''; render(); if(hasBio()&&bioSupported()) unlockBio(); return;
     case 'settings': UI.modal={type:'settings'}; render(); return focusNewKid();
-    case 'quickAddKid': if(!UI.parent){UI.after='settings';UI.modal={type:'pin'};UI.pinBuf='';return render();} UI.modal={type:'settings'}; render(); return focusNewKid();
+    case 'quickAddKid': if(!UI.parent){UI.after='settings';UI.modal={type:'pin'};UI.pinBuf='';render(); if(hasBio()&&bioSupported()) unlockBio(); return;} UI.modal={type:'settings'}; render(); return focusNewKid();
     case 'mclose': UI.modal=null; return render();
     case 'mok': return UI.modal.ok();
     case 'points': keepReason(); return doPoints();
     case 'addKid': return addKid();
     case 'addReward': return addReward();
     case 'savePin': return savePin();
+    case 'setupBio': return setupBio();
+    case 'disableBio': return disableBio();
+    case 'unlockBio': return unlockBio();
+    case 'loadDefaultPresets': {const a=$('#presetAdd'),s=$('#presetSub');if(a)a.value=DEFAULT_CONFIG.presets.add.join('\n');if(s)s.value=DEFAULT_CONFIG.presets.sub.join('\n');toast('已載入預設分數項目，記得按最下方「儲存全部設定」');return;}
     case 'resetPin': UI.modal={type:'confirm',text:'確定要將家長密碼重設回預設值「0000」嗎？',ok:async()=>{const c=cfg();await put('config','main',{pin:'0000',presets:c.presets,nicknames:c.nicknames||{}});UI.parent=true;UI.modal=null;toast('密碼已重設為 0000 並進入家長模式');render();}}; return render();
     case 'saveSettings': return saveSettings();
     case 'exportBackup': return exportBackup();
