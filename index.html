@@ -205,12 +205,33 @@ async function unlockBio(){
       allowCredentials:[{id:b64ToBuf(id),type:'public-key'}],
       userVerification:'required', timeout:60000
     }});
-    UI.parent=true; UI.modal=UI.after==='settings'?{type:'settings'}:null; UI.after=null; UI.pinBuf='';
-    toast('🔓 Face ID / 指紋驗證成功！'); render();
+    enterParent(UI.after,'🔓 Face ID / 指紋驗證成功！');
   }catch(e){ if(e.name!=='NotAllowedError') toast('生物辨識驗證失敗，請改用密碼'); }
 }
+const PARENT_TTL=3*60*1000;
+function fmtRemain(){
+  const s=Math.max(0,Math.ceil((UI.parentUntil-Date.now())/1000));
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+function enterParent(after,msg='已進入家長模式（3 分鐘後自動鎖定）'){
+  UI.parent=true; UI.parentUntil=Date.now()+PARENT_TTL;
+  UI.modal=after==='settings'?{type:'settings'}:null; UI.after=null; UI.pinBuf='';
+  toast(msg); render();
+}
+function exitParent(msg='已離開家長模式'){
+  UI.parent=false; UI.parentUntil=0;
+  if(UI.modal&&UI.modal.type==='settings') UI.modal=null;
+  toast(msg); render();
+}
+function checkParentTimeout(){
+  if(!UI.parent) return;
+  if(Date.now()>=UI.parentUntil) return exitParent('家長模式已超過 3 分鐘自動鎖定，請重新驗證');
+  const el=$('#pTimer'); if(el) el.textContent=fmtRemain();
+}
+setInterval(checkParentTimeout,1000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) checkParentTimeout(); });
 let S={config:null,kids:[],rewards:[],logs:[],avatars:{},ready:{c:false,k:false,r:false,l:false}};
-let UI={kid:null,parent:false,mode:'add',amt:1,reason:'',filter:'all',logKid:'all',modal:null,pinBuf:'',edit:null};
+let UI={kid:null,parent:false,parentUntil:0,mode:'add',amt:1,reason:'',filter:'all',logKid:'all',modal:null,pinBuf:'',edit:null};
 let db=null, offline=false, loadTimer=null, slow=false;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -301,7 +322,7 @@ function _render(){
   if(AUTH.state!=='in'){ app.innerHTML=authHtml(); return; }
   const loading=db&&!(S.ready.c&&S.ready.k&&S.ready.r&&S.ready.l);
   let h=`<header><h1>${THEME_TITLES[th]||'好習慣集點樂園'}</h1>
-    <button class="btn sm ${UI.parent?'pri':''}" data-act="lock">${UI.parent?'🔓 家長模式':'🔒 家長'}</button>
+    <button class="btn sm ${UI.parent?'pri':''}" data-act="lock">${UI.parent?`🔓 家長 <span id="pTimer">${fmtRemain()}</span>`:'🔒 家長'}</button>
     ${UI.parent?'<button class="btn sm" data-act="settings">⚙️</button>':''}</header>`;
   if(offline) h+=`<div class="banner">目前連不上網路，剛剛的變更會先存在這台裝置，恢復連線後自動同步。</div>`;
   if(slow&&loading) h+=`<div class="banner">雲端資料還在連線中，請稍候…</div>`;
@@ -442,14 +463,14 @@ document.addEventListener('click',async e=>{
   if(d.pin!==undefined){
     const v=d.pin; if(v==='C')UI.pinBuf=''; else if(v==='⌫')UI.pinBuf=UI.pinBuf.slice(0,-1); else if(UI.pinBuf.length<4)UI.pinBuf+=v;
     UI.modal.err=false;
-    if(UI.pinBuf.length===4){ if(UI.pinBuf===String(cfg().pin||'0000')){UI.parent=true;UI.modal=UI.after==='settings'?{type:'settings'}:null;UI.after=null;toast('已進入家長模式');} else {UI.modal.err=true;} UI.pinBuf=''; }
+    if(UI.pinBuf.length===4){ if(UI.pinBuf===String(cfg().pin||'0000')){return enterParent(UI.after);} else {UI.modal.err=true;} UI.pinBuf=''; }
     return render();
   }
   if(d.kdel){const k=S.kids.find(x=>x.id===d.kdel);UI.modal={type:'confirm',text:`確定刪除「${k.name}」？（點數紀錄也會一併刪除）`,ok:async()=>{for(const l of S.logs.filter(l=>l.kidId===k.id))await del('logs',l.id);if(db)await db.collection('avatars').doc(k.id).delete().catch(()=>{});await del('kids',k.id);UI.modal={type:'settings'};render();}};return render();}
   if(d.rdel){await del('rewards',d.rdel);return render();}
   if(d.avdel){ if(db) await db.collection('avatars').doc(d.avdel).delete(); delete S.avatars[d.avdel]; toast('已改回預設角色'); return render(); }
   switch(d.act){
-    case 'lock': if(UI.parent){UI.parent=false;toast('已離開家長模式');return render();} UI.modal={type:'pin'};UI.pinBuf=''; render(); if(hasBio()&&bioSupported()) unlockBio(); return;
+    case 'lock': if(UI.parent) return exitParent(); UI.modal={type:'pin'};UI.pinBuf=''; render(); if(hasBio()&&bioSupported()) unlockBio(); return;
     case 'settings': UI.modal={type:'settings'}; render(); return focusNewKid();
     case 'quickAddKid': if(!UI.parent){UI.after='settings';UI.modal={type:'pin'};UI.pinBuf='';render(); if(hasBio()&&bioSupported()) unlockBio(); return;} UI.modal={type:'settings'}; render(); return focusNewKid();
     case 'mclose': UI.modal=null; return render();
@@ -462,7 +483,7 @@ document.addEventListener('click',async e=>{
     case 'disableBio': return disableBio();
     case 'unlockBio': return unlockBio();
     case 'loadDefaultPresets': {const a=$('#presetAdd'),s=$('#presetSub');if(a)a.value=DEFAULT_CONFIG.presets.add.join('\n');if(s)s.value=DEFAULT_CONFIG.presets.sub.join('\n');toast('已載入預設分數項目，記得按最下方「儲存全部設定」');return;}
-    case 'resetPin': UI.modal={type:'confirm',text:'確定要將家長密碼重設回預設值「0000」嗎？',ok:async()=>{const c=cfg();await put('config','main',{pin:'0000',presets:c.presets,nicknames:c.nicknames||{}});UI.parent=true;UI.modal=null;toast('密碼已重設為 0000 並進入家長模式');render();}}; return render();
+    case 'resetPin': UI.modal={type:'confirm',text:'確定要將家長密碼重設回預設值「0000」嗎？',ok:async()=>{const c=cfg();await put('config','main',{pin:'0000',presets:c.presets,nicknames:c.nicknames||{}});enterParent(null,'密碼已重設為 0000 並進入家長模式（3 分鐘後自動鎖定）');}}; return render();
     case 'saveSettings': return saveSettings();
     case 'exportBackup': return exportBackup();
     case 'localPreview': return startLocalPreview();
