@@ -328,16 +328,21 @@ function _render(){
 
   // 家長加扣點
   if(UI.parent){
-    const P=cfg().presets[UI.mode]||[];
+    const P=(cfg().presets[UI.mode]||[]).map(parsePreset);
+    const sign=UI.mode==='add'?'+':'−';
     h+=`<div class="card parent"><h2>✏️ 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
       <div class="muted" style="margin-bottom:4px">對象孩子</div>
       <div class="tabs" style="padding:2px 0 8px">${S.kids.map(x=>`<button class="tab ${x.id===k.id?'on':''}" data-kid="${x.id}">${face(x)}${esc(x.name)}</button>`).join('')}<button class="tab" data-act="quickAddKid" style="padding:8px 12px">＋ 新增孩子</button></div>
       <div class="seg"><button class="a ${UI.mode==='add'?'on':''}" data-mode="add">➕ 加點</button><button class="s ${UI.mode==='sub'?'on':''}" data-mode="sub">➖ 扣點</button></div>
-      <div class="muted">點數</div>
+      <div class="muted" style="margin-bottom:4px">選擇項目（自動帶入預設分數）</div>
+      <select id="presetSel" style="margin-bottom:8px">
+        <option value="">-- 請選擇預設項目（或點下方標籤／自行輸入） --</option>
+        ${P.map((p,i)=>`<option value="${i}" ${UI.reason===p.text?'selected':''}>${esc(p.text)}（${sign}${p.pts||1} 點）</option>`).join('')}
+      </select>
+      <div class="filters" style="margin:0 0 10px">${P.map(p=>`<button class="chip ${UI.mode} ${UI.reason===p.text?'on':''}" data-preset="${esc(p.text)}" data-ppts="${p.pts||1}">${esc(p.text)} <b style="color:${UI.reason===p.text?'inherit':(UI.mode==='add'?'var(--ok)':'var(--bad)')}">${sign}${p.pts||1}</b></button>`).join('')}</div>
+      <div class="muted">點數（已依項目自動帶入，可自由微調）</div>
       <div class="amts">${[1,2,3,5,10].map(n=>`<button class="chip ${UI.amt==n?'on':''}" data-amt="${n}">${n}</button>`).join('')}
         <input id="amtIn" type="number" min="1" value="${UI.amt}" style="width:80px;flex:none"></div>
-      <div class="muted">原因（點選常用會自動帶入預設分數，上方分數仍可自由調整）</div>
-      <div class="filters" style="margin:6px 0">${P.map(raw=>{const p=parsePreset(raw);return `<button class="chip ${UI.mode}" data-preset="${esc(p.text)}" ${p.pts?`data-ppts="${p.pts}"`:''}>${esc(p.text)}${p.pts?` <b style="color:${UI.mode==='add'?'var(--ok)':'var(--bad)'}">${UI.mode==='add'?'+':'−'}${p.pts}</b>`:''}</button>`;}).join('')}</div>
       <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">幫 ${esc(k.name)} ${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
     </div>`;
   }
@@ -470,6 +475,11 @@ document.addEventListener('input',e=>{
   if(e.target.id==='amtIn'){const v=parseInt(e.target.value);if(v>0){UI.amt=v;const k=curKid(),b=$('[data-act=points]');if(b)b.textContent=`幫 ${k?k.name:''} ${UI.mode==='add'?'加':'扣'} ${v} 點`;}}
 });
 document.addEventListener('change',async e=>{
+  if(e.target.id==='presetSel'){
+    const idx=e.target.value;
+    if(idx!==''){const p=parsePreset((cfg().presets[UI.mode]||[])[+idx]);if(p.text){UI.reason=p.text;UI.amt=p.pts||1;render();}}
+    return;
+  }
   if(e.target.id==='importIn'&&e.target.files[0]){ return importBackup(e.target.files[0]); }
   const id=e.target.dataset&&e.target.dataset.avup; if(!id||!e.target.files[0])return;
   try{
