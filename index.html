@@ -343,7 +343,7 @@ function modalHtml(){
   if(m.type==='pin') return `<div class="modal" data-close="1"><div class="card" style="text-align:center"><h2 style="justify-content:center">🔒 輸入家長密碼</h2>
     <div class="pin">${[0,1,2,3].map(i=>`<span class="${UI.pinBuf.length>i?'f':''}"></span>`).join('')}</div>
     <div class="pad">${[1,2,3,4,5,6,7,8,9,'C',0,'⌫'].map(n=>`<button class="btn" data-pin="${n}">${n}</button>`).join('')}</div>
-    <p class="muted" style="margin-top:10px">${m.err?'<span style="color:var(--bad)">密碼錯誤</span>':'預設 0000'}</p></div></div>`;
+    <p class="muted" style="margin-top:10px">${m.err?'<span style="color:var(--bad)">密碼錯誤，請重試</span>':(cfg().pin==='0000'?'預設密碼：0000（進入後可在 ⚙️ 修改）':'請輸入 4 位數家長密碼')}</p></div></div>`;
   if(m.type==='confirm') return `<div class="modal"><div class="card"><p style="white-space:pre-line;font-weight:700">${esc(m.text)}</p>
     <div class="row"><button class="btn" data-act="mclose">取消</button><button class="btn pri" data-act="mok">確定</button></div></div></div>`;
   if(m.type==='settings'){
@@ -359,15 +359,15 @@ function modalHtml(){
     <div class="row"><input id="newREmoji" placeholder="🎁" style="width:54px;flex:none"><input id="newRName" placeholder="獎品名稱"><input id="newRCost" type="number" placeholder="點數" style="width:74px;flex:none"><button class="btn sm pri" style="flex:none" data-act="addReward">新增</button></div>
     <div class="sec-title">➕ 常用加點原因（每行一個）</div><textarea id="presetAdd" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.add.join('\n'))}</textarea>
     <div class="sec-title">➖ 常用扣點原因（每行一個）</div><textarea id="presetSub" rows="3" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.sub.join('\n'))}</textarea>
-    <div class="sec-title">🔑 家長密碼（4 位數字）</div><input id="pinIn" inputmode="numeric" maxlength="4" value="${esc(c.pin)}">
-    <div class="row" style="margin-top:14px"><button class="btn pri" data-act="saveSettings">儲存設定</button></div>
-    <div class="sec-title">💾 備份</div>
-    <div class="row"><button class="btn sm" data-act="exportBackup">⬇️ 匯出備份</button><label class="btn sm" style="text-align:center">⬆️ 匯入備份<input type="file" accept=".json,application/json" id="importIn" hidden></label></div>
-    <p class="muted">建議每個月匯出一次，存在電腦或雲端硬碟。</p>
+    <div class="sec-title">🔑 家長密碼（4 位數字，儲存後全家同步生效）</div>
+    <div class="row"><input id="pinIn" inputmode="numeric" maxlength="4" placeholder="請輸入 4 位數字" value="${esc(c.pin)}"><button class="btn sm pri" style="flex:none" data-act="savePin">儲存密碼</button></div>
     <div class="sec-title">👤 帳號與稱呼（點數紀錄會顯示由誰加減）</div>
     <div class="row" style="margin-bottom:6px"><input id="myNick" placeholder="例如：爸爸、媽媽" value="${esc((c.nicknames&&c.nicknames[myEmail()])||AUTH.user?.name||'')}"><button class="btn sm" style="flex:none" data-act="signout">登出</button></div>
     <div class="muted" style="margin-bottom:6px">目前登入：${esc(AUTH.user?.email||'')}</div>
-    <p class="muted">修改孩子名字、主題、獎品內容後按「儲存設定」。</p></div></div>`;
+    <div class="row" style="margin-top:14px"><button class="btn pri" data-act="saveSettings">💾 儲存全部設定</button></div>
+    <div class="sec-title">📦 備份</div>
+    <div class="row"><button class="btn sm" data-act="exportBackup">⬇️ 匯出備份</button><label class="btn sm" style="text-align:center">⬆️ 匯入備份<input type="file" accept=".json,application/json" id="importIn" hidden></label></div>
+    <p class="muted">建議每個月匯出一次，存在電腦或雲端硬碟。</p></div></div>`;
   }
   return '';
 }
@@ -405,6 +405,7 @@ document.addEventListener('click',async e=>{
     case 'points': keepReason(); return doPoints();
     case 'addKid': return addKid();
     case 'addReward': return addReward();
+    case 'savePin': return savePin();
     case 'saveSettings': return saveSettings();
     case 'exportBackup': return exportBackup();
     case 'localPreview': return startLocalPreview();
@@ -443,6 +444,12 @@ async function addReward(){ if(busy)return; const n=$('#newRName').value.trim(),
   render(); }
 function focusNewKid(){ const i=$('#newKid'); if(i){ i.scrollIntoView({block:'center'}); } }
 function keepReason(){const r=$('#reasonIn');if(r)UI.reason=r.value;}
+async function savePin(){
+  const pin=$('#pinIn').value.trim(); if(!/^\d{4}$/.test(pin)) return toast('密碼需為 4 位數字');
+  const c=cfg();
+  await put('config','main',{pin,presets:c.presets,nicknames:c.nicknames||{}});
+  toast('家長密碼已更新並儲存！'); render();
+}
 async function saveSettings(){
   const pin=$('#pinIn').value.trim(); if(!/^\d{4}$/.test(pin)) return toast('密碼需為 4 位數字');
   const lines=id=>$(id).value.split('\n').map(s=>s.trim()).filter(Boolean);
