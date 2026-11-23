@@ -214,7 +214,12 @@ let UI={kid:null,parent:false,mode:'add',amt:1,reason:'',filter:'all',logKid:'al
 let db=null, offline=false, loadTimer=null, slow=false;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const cfg=()=>Object.assign({},DEFAULT_CONFIG,S.config||{});
+const cfg=()=>{
+  const c=Object.assign({},DEFAULT_CONFIG,S.config||{});
+  const hasPts=arr=>Array.isArray(arr)&&arr.some(s=>/[:：]\s*\d+\s*$/.test(String(s||'')));
+  if(!c.presets||(!hasPts(c.presets.add)&&!hasPts(c.presets.sub))) c.presets=DEFAULT_CONFIG.presets;
+  return c;
+};
 const curKid=()=>S.kids.find(k=>k.id===UI.kid)||S.kids[0];
 const fmt=ts=>{const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
 let lid=0; const localId=()=>'L'+Date.now().toString(36)+(lid++);
