@@ -83,6 +83,7 @@ body[data-theme=comic] .log li,body[data-theme=snoopy] .log li{border-bottom:1.5
 .log .d{font-weight:900;min-width:54px;text-align:center;border-radius:10px;padding:4px 0;color:#fff}
 .log .d.p{background:var(--ok)}.log .d.m{background:var(--bad)}.log .d.r{background:var(--pri)}
 .log .t{flex:1}.log .t b{display:block;font-size:15px}.log .t small{color:var(--muted)}
+.log .who{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:0 7px;font-weight:700;color:var(--ink)}
 .filters{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
 .chip{border:var(--bw) solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 body[data-theme=cloud] .chip,body[data-theme=cinnamoroll] .chip{border:1.5px solid var(--line)}
@@ -198,12 +199,15 @@ const newId=col=>db?db.collection(col).doc().id:localId();
 function sortAll(){S.kids.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));S.rewards.sort((a,b)=>a.cost-b.cost);S.logs.sort((a,b)=>b.ts-a.ts);}
 
 /* ---------- 業務動作 ---------- */
+const myEmail=()=>(AUTH.user?.email||'').toLowerCase();
+const actorName=()=>{const e=myEmail(),n=cfg().nicknames||{};return (e&&n[e])||AUTH.user?.name||(e.includes('@')?e.split('@')[0]:'')||'家長';};
+const whoOf=l=>{const e=(l.byEmail||'').toLowerCase(),n=cfg().nicknames||{};return (e&&n[e])||l.by||'';};
 async function changePoints(kid,delta,reason,type,extra={}){
   const bal=(kid.balance||0)+delta;
   const earned=(kid.earned||0)+(type==='add'?delta:0);
   const {id,...rest}=kid;
   await put('kids',kid.id,{...rest,balance:bal,earned});
-  await put('logs',newId('logs'),{kidId:kid.id,delta,reason,type,balanceAfter:bal,ts:Date.now(),...extra});
+  await put('logs',newId('logs'),{kidId:kid.id,delta,reason,type,balanceAfter:bal,ts:Date.now(),by:actorName(),byEmail:myEmail(),...extra});
 }
 async function doPoints(){
   const k=curKid(); if(!k)return;
@@ -283,7 +287,7 @@ function _render(){
   // 家長加扣點
   if(UI.parent){
     const P=cfg().presets[UI.mode]||[];
-    h+=`<div class="card parent"><h2>✏️ 加點 / 扣點</h2>
+    h+=`<div class="card parent"><h2>✏️ 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
       <div class="seg"><button class="a ${UI.mode==='add'?'on':''}" data-mode="add">➕ 加點</button><button class="s ${UI.mode==='sub'?'on':''}" data-mode="sub">➖ 扣點</button></div>
       <div class="muted">點數</div>
       <div class="amts">${[1,2,3,5,10].map(n=>`<button class="chip ${UI.amt==n?'on':''}" data-amt="${n}">${n}</button>`).join('')}
@@ -307,9 +311,9 @@ function _render(){
   const mine=S.logs.filter(l=>l.kidId===k.id&&(UI.filter==='all'||l.type===UI.filter));
   h+=`<div class="card"><h2>📒 點數紀錄</h2>
     <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
-    ${mine.length?`<ul class="log">${mine.slice(0,100).map(l=>`<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
-      <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}・餘 ${l.balanceAfter} 點</small></span>
-      ${UI.parent?`<button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button>`:''}</li>`).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
+    ${mine.length?`<ul class="log">${mine.slice(0,100).map(l=>{const who=whoOf(l);return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
+      <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
+      ${UI.parent?`<button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button>`:''}</li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
   </div>`;
   app.innerHTML=h+modalHtml();
 }
@@ -352,8 +356,9 @@ function modalHtml(){
     <div class="sec-title">💾 備份</div>
     <div class="row"><button class="btn sm" data-act="exportBackup">⬇️ 匯出備份</button><label class="btn sm" style="text-align:center">⬆️ 匯入備份<input type="file" accept=".json,application/json" id="importIn" hidden></label></div>
     <p class="muted">建議每個月匯出一次，存在電腦或雲端硬碟。</p>
-    <div class="sec-title">👤 帳號</div>
-    <div class="row"><span class="muted">${esc(AUTH.user?.email||'')}</span><button class="btn sm" style="flex:none" data-act="signout">登出</button></div>
+    <div class="sec-title">👤 帳號與稱呼（點數紀錄會顯示由誰加減）</div>
+    <div class="row" style="margin-bottom:6px"><input id="myNick" placeholder="例如：爸爸、媽媽" value="${esc((c.nicknames&&c.nicknames[myEmail()])||AUTH.user?.name||'')}"><button class="btn sm" style="flex:none" data-act="signout">登出</button></div>
+    <div class="muted" style="margin-bottom:6px">目前登入：${esc(AUTH.user?.email||'')}</div>
     <p class="muted">修改孩子名字、主題、獎品內容後按「儲存設定」。</p></div></div>`;
   }
   return '';
@@ -434,7 +439,10 @@ async function saveSettings(){
   const lines=id=>$(id).value.split('\n').map(s=>s.trim()).filter(Boolean);
   const kidEdits=S.kids.map(k=>({k,name:$(`[data-kname="${k.id}"]`).value.trim()||k.name,theme:$(`[data-ktheme="${k.id}"]`).value}));
   const rEdits=S.rewards.map(r=>({r,emoji:$(`[data-remoji="${r.id}"]`).value.trim()||'🎁',name:$(`[data-rname="${r.id}"]`).value.trim()||r.name,cost:parseInt($(`[data-rcost="${r.id}"]`).value)||r.cost}));
-  await put('config','main',{pin,presets:{add:lines('#presetAdd'),sub:lines('#presetSub')}});
+  const nicknames=Object.assign({},cfg().nicknames||{});
+  const me=myEmail(), nick=$('#myNick')?.value.trim();
+  if(me&&nick) nicknames[me]=nick;
+  await put('config','main',{pin,presets:{add:lines('#presetAdd'),sub:lines('#presetSub')},nicknames});
   for(const x of kidEdits) if(x.name!==x.k.name||x.theme!==x.k.theme){const {id,...rest}=x.k;await put('kids',id,{...rest,name:x.name,theme:x.theme});}
   for(const x of rEdits) if(x.name!==x.r.name||x.cost!==x.r.cost||x.emoji!==x.r.emoji){const {id,...rest}=x.r;await put('rewards',id,{...rest,name:x.name,cost:x.cost,emoji:x.emoji});}
   UI.modal=null; toast('設定已儲存'); render();
@@ -539,7 +547,7 @@ if(!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith
   let started = false;
   onAuthStateChanged(auth, user => {
     if (!user) { window.APP.setAuth({ state: 'out', user: null }); return; }
-    window.APP.setAuth({ state: 'in', user: { email: user.email }, err: '' });
+    window.APP.setAuth({ state: 'in', user: { email: user.email, name: user.displayName || '' }, err: '' });
     if (!started) { started = true; window.APP.start(dbx); }
   });
 }
