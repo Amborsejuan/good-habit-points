@@ -9,17 +9,8 @@
 <style>
 :root{--r:20px}
 body{margin:0;font-family:"Noto Sans TC",system-ui,sans-serif;transition:background .3s;min-height:100vh}
-/* ===== 帕洽狗主題 (Pochacco) ===== */
-body[data-theme=pochacco],body[data-theme=cinnamoroll]{--bg:#eefaf4;--bg2:#ffffff;--ink:#2d4a3e;--muted:#6d8f80;--pri:#4cc394;--pri2:#ff6b7a;--ok:#3ec48c;--bad:#ff6b7a;--line:#c4eedb;--shadow:0 8px 22px rgba(76,195,148,.22);--bw:2px;
- background:
-  radial-gradient(circle at 12% 12%,#ffffff 0 48px,transparent 50px),
-  radial-gradient(circle at 20% 10%,#ffffff 0 36px,transparent 38px),
-  radial-gradient(circle at 86% 8%,#ffffff 0 44px,transparent 46px),
-  radial-gradient(circle at 78% 11%,#ffffff 0 32px,transparent 34px),
-  radial-gradient(circle at 90% 85%,#ffe4e8 0 70px,transparent 72px),
-  linear-gradient(180deg,#d3f5e6 0%,#effbf5 280px,#fff7f8 100%);}
-/* ===== 史努比主題 (Snoopy) ===== */
-body[data-theme=snoopy]{--bg:#fff8ea;--bg2:#ffffff;--ink:#1d1d1d;--muted:#6a6256;--pri:#e63946;--pri2:#ffd166;--ok:#2a9d8f;--bad:#d62828;--line:#1d1d1d;--shadow:4px 4px 0 #1d1d1d;--bw:2.5px;
+/* ===== 史努比 & 帕洽狗 漫畫主題 (Snoopy / Pochacco) ===== */
+body[data-theme=snoopy],body[data-theme=pochacco],body[data-theme=cinnamoroll]{--bg:#fff8ea;--bg2:#ffffff;--ink:#1d1d1d;--muted:#6a6256;--pri:#e63946;--pri2:#ffd166;--ok:#2a9d8f;--bad:#d62828;--line:#1d1d1d;--shadow:4px 4px 0 #1d1d1d;--bw:2.5px;
  background-color:#fff8ea;
  background-image:radial-gradient(#e6d7b8 1.4px,transparent 1.5px);
  background-size:16px 16px;}
@@ -30,71 +21,73 @@ body[data-theme=cloud]{--bg:#eaf5ff;--bg2:#ffffff;--ink:#3a5a80;--muted:#7f9bbd;
 body[data-theme=comic]{--bg:#fff8e6;--bg2:#ffffff;--ink:#1d1d1d;--muted:#6b6457;--pri:#ff6b4a;--pri2:#ffd23f;--ok:#2bb673;--bad:#ff4a4a;--line:#1d1d1d;--shadow:4px 4px 0 #1d1d1d;--bw:2.5px;
  background-color:#fff8e6;background-image:radial-gradient(#e9dcc0 1.3px,transparent 1.4px);background-size:14px 14px;}
 body{color:var(--ink)}
-.wrap{max-width:860px;margin:0 auto;padding:16px 14px 90px}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 90px}
 header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 header h1{font-size:20px;margin:0;flex:1;font-weight:900;letter-spacing:.5px}
-body[data-theme=comic] header h1,body[data-theme=snoopy] header h1{font-family:Bangers,"Noto Sans TC";font-size:25px;letter-spacing:1px}
-body[data-theme=pochacco] header h1,body[data-theme=cinnamoroll] header h1{color:#255c46;text-shadow:0 2px 0 #fff}
+body[data-theme=comic] header h1,body[data-theme=snoopy] header h1,body[data-theme=pochacco] header h1,body[data-theme=cinnamoroll] header h1{font-family:Bangers,"Noto Sans TC";font-size:25px;letter-spacing:1px}
 .btn{border:var(--bw) solid var(--line);background:var(--bg2);color:var(--ink);border-radius:14px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;box-shadow:var(--shadow);transition:transform .1s}
 .btn:active{transform:translateY(2px)}
 .btn.pri{background:var(--pri);color:#fff}
 body[data-theme=comic] .btn.pri{color:#1d1d1d;background:var(--pri2)}
-body[data-theme=snoopy] .btn.pri{background:var(--pri);color:#fff}
-body[data-theme=pochacco] .btn.pri,body[data-theme=cinnamoroll] .btn.pri{background:linear-gradient(135deg,#4cc394,#6ad4aa);border-color:#4cc394}
+body[data-theme=snoopy] .btn.pri,body[data-theme=pochacco] .btn.pri,body[data-theme=cinnamoroll] .btn.pri{background:var(--pri);color:#fff}
 .btn.ok{background:var(--ok);color:#fff}.btn.bad{background:var(--bad);color:#fff}
 .btn.sm{padding:6px 10px;font-size:13px;border-radius:10px}
 .btn.ghost{box-shadow:none;background:transparent}
 .tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px}
 .tab{flex:none;display:flex;align-items:center;gap:6px;padding:6px 14px 6px 6px;border-radius:999px;border:var(--bw) solid var(--line);background:var(--bg2);cursor:pointer;font-weight:700;color:var(--ink);font-family:inherit;font-size:15px;box-shadow:var(--shadow)}
 .tab.on{background:var(--pri);color:#fff}
-body[data-theme=comic] .tab.on,body[data-theme=snoopy] .tab.on{background:var(--pri2);color:#1d1d1d}
-body[data-theme=pochacco] .tab.on,body[data-theme=cinnamoroll] .tab.on{background:linear-gradient(135deg,#4cc394,#ff7585);color:#fff;border-color:#fff}
+body[data-theme=comic] .tab.on,body[data-theme=snoopy] .tab.on,body[data-theme=pochacco] .tab.on,body[data-theme=cinnamoroll] .tab.on{background:var(--pri2);color:#1d1d1d}
 .tab svg,.tab img{width:30px;height:30px}
 img.av{object-fit:contain;border-radius:18px}
 .tab img.av{border-radius:50%;object-fit:cover;background:#fff}
 img.av.sad{filter:grayscale(.6);transform:rotate(-6deg)}
 .card{background:var(--bg2);border:var(--bw) solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
-body[data-theme=pochacco] .card,body[data-theme=cinnamoroll] .card{border-radius:26px}
-.hero{display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}
-body[data-theme=snoopy] .hero{background:linear-gradient(180deg,#ffffff 0%,#fff9ed 84%,#e63946 84%,#e63946 100%)}
-body[data-theme=pochacco] .hero,body[data-theme=cinnamoroll] .hero{background:linear-gradient(135deg,#ffffff 0%,#eefaf4 65%,#fff0f2 100%)}
-.hero .mascot{width:130px;height:130px;flex:none}
-.hero .bal{flex:1}
-.hero .label{color:var(--muted);font-weight:700;font-size:14px}
+.kids-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px}
+.kids-grid .hero{margin-bottom:0;cursor:pointer;transition:transform .12s}
+.kids-grid .hero:active{transform:translateY(2px)}
+.kids-grid .hero.active-kid{outline:3.5px solid var(--pri2);outline-offset:2px}
+.kid-badge{display:inline-block;background:var(--pri2);color:#1d1d1d;border:2px solid #1d1d1d;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:900;margin-left:6px;vertical-align:middle}
+.kid-tag{display:inline-block;background:var(--pri2);color:#1d1d1d;border:1.5px solid #1d1d1d;border-radius:8px;padding:0 6px;font-size:12px;font-weight:900;margin-right:6px}
+.hero{display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;padding-bottom:24px}
+body[data-theme=snoopy] .hero,body[data-theme=pochacco] .hero,body[data-theme=cinnamoroll] .hero{background:linear-gradient(180deg,#ffffff 0%,#fff9ed 88%,#e63946 88%,#e63946 100%)}
+.hero .mascot{width:118px;height:118px;flex:none}
+.hero .bal{flex:1;min-width:0}
+.hero .label{color:var(--ink);font-weight:900;font-size:17px}
 .hero .num{font-size:64px;font-weight:900;line-height:1;color:var(--pri)}
-body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num{font-family:Bangers;font-size:80px;color:var(--pri);-webkit-text-stroke:2px #1d1d1d}
-.hero .sub{font-size:13px;color:var(--muted);margin-top:6px}
-.next{margin-top:10px;font-size:14px;font-weight:600}
+body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num,body[data-theme=pochacco] .hero .num,body[data-theme=cinnamoroll] .hero .num{font-family:Bangers;font-size:76px;color:var(--pri);-webkit-text-stroke:2px #1d1d1d}
+.hero .sub{font-size:13px;color:var(--muted);margin-top:4px}
+.next{margin-top:8px;font-size:13px;font-weight:700}
 .bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:6px;border:var(--bw) solid var(--line)}
-body[data-theme=comic] .bar,body[data-theme=snoopy] .bar{background:#fff}
+body[data-theme=comic] .bar,body[data-theme=snoopy] .bar,body[data-theme=pochacco] .bar,body[data-theme=cinnamoroll] .bar{background:#fff}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--pri2));border-radius:99px;transition:width .5s}
 h2{font-size:17px;margin:0 0 10px;font-weight:900;display:flex;align-items:center;gap:8px}
-body[data-theme=comic] h2,body[data-theme=snoopy] h2{font-family:Bangers,"Noto Sans TC";font-size:22px;letter-spacing:1px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.rw{border:var(--bw) solid var(--line);border-radius:16px;padding:12px;text-align:center;background:var(--bg);position:relative}
-body[data-theme=cloud] .rw,body[data-theme=pochacco] .rw,body[data-theme=cinnamoroll] .rw{border:2px solid var(--line)}
+body[data-theme=comic] h2,body[data-theme=snoopy] h2,body[data-theme=pochacco] h2,body[data-theme=cinnamoroll] h2{font-family:Bangers,"Noto Sans TC";font-size:22px;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px}
+.rw{border:var(--bw) solid var(--line);border-radius:16px;padding:12px;text-align:center;background:var(--bg);position:relative;display:flex;flex-direction:column;justify-content:space-between}
+body[data-theme=cloud] .rw{border:2px solid var(--line)}
 .rw .em{font-size:38px}.rw .nm{font-weight:700;margin:4px 0}.rw .cs{font-weight:900;color:var(--pri)}
 .rw.ready{outline:3px solid var(--ok);outline-offset:-3px}
 .rw .tag{position:absolute;top:6px;right:6px;background:var(--ok);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px}
-.rw .btn{margin-top:8px;width:100%}
+.rw .rw-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.rw .rw-btns .btn{margin-top:0;flex:1;min-width:60px;padding:6px 6px;font-size:12px}
 .log{list-style:none;margin:0;padding:0}
 .log li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px dashed var(--line)}
-body[data-theme=comic] .log li,body[data-theme=snoopy] .log li{border-bottom:1.5px dashed #bdb29a}
+body[data-theme=comic] .log li,body[data-theme=snoopy] .log li,body[data-theme=pochacco] .log li,body[data-theme=cinnamoroll] .log li{border-bottom:1.5px dashed #bdb29a}
 .log .d{font-weight:900;min-width:54px;text-align:center;border-radius:10px;padding:4px 0;color:#fff}
 .log .d.p{background:var(--ok)}.log .d.m{background:var(--bad)}.log .d.r{background:var(--pri)}
 .log .t{flex:1}.log .t b{display:block;font-size:15px}.log .t small{color:var(--muted)}
 .log .who{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:0 7px;font-weight:700;color:var(--ink)}
 .filters{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
 .chip{border:var(--bw) solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-body[data-theme=cloud] .chip,body[data-theme=pochacco] .chip,body[data-theme=cinnamoroll] .chip{border:1.5px solid var(--line)}
+body[data-theme=cloud] .chip{border:1.5px solid var(--line)}
 .chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
-body[data-theme=comic] .chip.on,body[data-theme=snoopy] .chip.on{background:var(--pri2);color:#1d1d1d;border-color:#1d1d1d}
+body[data-theme=comic] .chip.on,body[data-theme=snoopy] .chip.on,body[data-theme=pochacco] .chip.on,body[data-theme=cinnamoroll] .chip.on{background:var(--pri2);color:#1d1d1d;border-color:#1d1d1d}
 .chip.add{border-color:var(--ok)}.chip.sub{border-color:var(--bad)}
 .parent{border-style:dashed}
 .amts{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .amts .chip{min-width:44px;font-size:16px;font-weight:900}
 input,select{font:inherit;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);width:100%;box-sizing:border-box}
-body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoopy] input,body[data-theme=snoopy] select{border:2.5px solid #1d1d1d}
+body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoopy] input,body[data-theme=snoopy] select,body[data-theme=pochacco] input,body[data-theme=pochacco] select,body[data-theme=cinnamoroll] input,body[data-theme=cinnamoroll] select{border:2.5px solid #1d1d1d}
 .row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1}
 .seg{display:flex;border-radius:14px;overflow:hidden;border:var(--bw) solid var(--line);margin-bottom:8px}
@@ -119,7 +112,7 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
 @keyframes pop{40%{transform:scale(1.25)}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700;z-index:98;font-size:14px}
 .sec-title{font-weight:900;margin:14px 0 6px}
-@media(max-width:520px){.hero .mascot{width:96px;height:96px}.hero .num{font-size:52px}body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num{font-size:62px}}
+@media(max-width:520px){.kids-grid{grid-template-columns:1fr}.hero .mascot{width:96px;height:96px}.hero .num{font-size:52px}body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num,body[data-theme=pochacco] .hero .num,body[data-theme=cinnamoroll] .hero .num{font-size:62px}}
 </style>
 </head>
 <body data-theme="pochacco">
@@ -170,12 +163,12 @@ function face(kid,mood){
   return mascot(kid.theme,mood);
 }
 const THEMES={pochacco:'🐶 帕洽狗',snoopy:'🐾 史努比',cloud:'☁️ 雲朵棉棉',comic:'📰 漫畫刺刺'};
-const THEME_TITLES={pochacco:'🐶 帕洽狗好習慣集點樂園',cinnamoroll:'🐶 帕洽狗好習慣集點樂園',snoopy:'🐾 SNOOPY 史努比集點樂園',comic:'GOOD HABIT POINTS!',cloud:'好習慣集點樂園'};
+const THEME_TITLES={pochacco:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',cinnamoroll:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',snoopy:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',comic:'GOOD HABIT POINTS!',cloud:'好習慣集點樂園'};
 
 /* ---------- 狀態 ---------- */
 const DEFAULT_CONFIG={pin:'0000',presets:{add:['自己刷牙洗臉','整理玩具','準時上床睡覺','完成功課','幫忙做家事','有禮貌說謝謝','吃完飯不挑食'],sub:['亂發脾氣','拖拖拉拉','說謊','打架/推人','超過3C時間']}};
 let S={config:null,kids:[],rewards:[],logs:[],avatars:{},ready:{c:false,k:false,r:false,l:false}};
-let UI={kid:null,parent:false,mode:'add',amt:1,reason:'',filter:'all',modal:null,pinBuf:'',edit:null};
+let UI={kid:null,parent:false,mode:'add',amt:1,reason:'',filter:'all',logKid:'all',modal:null,pinBuf:'',edit:null};
 let db=null, offline=false, loadTimer=null, slow=false;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -218,11 +211,11 @@ async function doPoints(){
   await changePoints(k,delta,reason,UI.mode);
   UI.reason='';
   if(delta>0){burst(k.theme==='snoopy'?'🐾':(k.theme==='pochacco'||k.theme==='cinnamoroll')?'🐾':'⭐');toast(`${k.name} +${amt} 點！`);} else toast(`${k.name} −${amt} 點`);
-  render(); const n=$('.hero .num'); n&&n.classList.add('pop');
+  render(); const n=$(`[data-num="${k.id}"]`); n&&n.classList.add('pop');
 }
-async function redeem(rid){
-  const k=curKid(), r=S.rewards.find(x=>x.id===rid); if(!k||!r)return;
-  if((k.balance||0)<r.cost){toast('點數還不夠喔');return;}
+async function redeem(rid,kidId){
+  const k=(kidId&&S.kids.find(x=>x.id===kidId))||curKid(), r=S.rewards.find(x=>x.id===rid); if(!k||!r)return;
+  if((k.balance||0)<r.cost){toast(`${k.name} 的點數還不夠喔`);return;}
   UI.modal={type:'confirm',text:`確定讓 ${k.name} 用 ${r.cost} 點兌換「${r.emoji||''}${r.name}」？`,ok:async()=>{
     await changePoints(k,-r.cost,`兌換：${r.emoji||''}${r.name}`,'redeem',{rewardId:r.id});
     UI.modal=null; burst('🎁'); toast('兌換成功！'); render();
@@ -273,47 +266,55 @@ function _render(){
       <button class="btn pri" data-act="${UI.parent?'settings':'lock'}">${UI.parent?'⚙️ 新增孩子':'🔒 進入家長模式'}</button></div>`;
     app.innerHTML=h+modalHtml(); return;
   }
-  h+=`<div class="tabs">${S.kids.map(x=>`<button class="tab ${x.id===k.id?'on':''}" data-kid="${x.id}">${face(x)}${esc(x.name)}</button>`).join('')}<button class="tab" data-act="quickAddKid" style="padding:10px 14px">＋ 新增孩子</button></div>`;
-
-  // 主卡
-  const bal=k.balance||0;
-  const next=S.rewards.find(r=>r.cost>bal);
-  const lastLog=S.logs.find(l=>l.kidId===k.id);
-  h+=`<div class="card hero">${face(k,lastLog&&lastLog.delta<0&&lastLog.type!=='redeem'?'sad':'happy')}
-    <div class="bal"><div class="label">${esc(k.name)} 目前點數</div><div class="num">${bal}</div>
-    <div class="sub">累積共獲得 ${k.earned||0} 點</div>
-    ${next?`<div class="next">再 ${next.cost-bal} 點就能換 ${esc(next.emoji||'')}${esc(next.name)}</div><div class="bar"><i style="width:${Math.min(100,bal/next.cost*100)}%"></i></div>`:(S.rewards.length?`<div class="next">🎉 所有獎品都可以兌換了！</div>`:'')}
-    </div></div>`;
+  // 所有孩子的點數卡（同一頁並排顯示，點卡片可直接選取操作對象）
+  h+=`<div class="kids-grid">${S.kids.map(x=>{
+    const bal=x.balance||0;
+    const next=S.rewards.find(r=>r.cost>bal);
+    const lastLog=S.logs.find(l=>l.kidId===x.id);
+    const active=UI.parent&&x.id===k.id;
+    return `<div class="card hero ${active?'active-kid':''}" data-kid="${x.id}">${face(x,lastLog&&lastLog.delta<0&&lastLog.type!=='redeem'?'sad':'happy')}
+      <div class="bal"><div class="label">${esc(x.name)} 目前點數${active?'<span class="kid-badge">操作中</span>':''}</div><div class="num" data-num="${x.id}">${bal}</div>
+      <div class="sub">累積共獲得 ${x.earned||0} 點</div>
+      ${next?`<div class="next">再 ${next.cost-bal} 點就能換 ${esc(next.emoji||'')}${esc(next.name)}</div><div class="bar"><i style="width:${Math.min(100,bal/next.cost*100)}%"></i></div>`:(S.rewards.length?`<div class="next">🎉 所有獎品都可以兌換了！</div>`:'')}
+      </div></div>`;
+  }).join('')}</div>`;
 
   // 家長加扣點
   if(UI.parent){
     const P=cfg().presets[UI.mode]||[];
     h+=`<div class="card parent"><h2>✏️ 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
+      <div class="muted" style="margin-bottom:4px">對象孩子</div>
+      <div class="tabs" style="padding:2px 0 8px">${S.kids.map(x=>`<button class="tab ${x.id===k.id?'on':''}" data-kid="${x.id}">${face(x)}${esc(x.name)}</button>`).join('')}<button class="tab" data-act="quickAddKid" style="padding:8px 12px">＋ 新增孩子</button></div>
       <div class="seg"><button class="a ${UI.mode==='add'?'on':''}" data-mode="add">➕ 加點</button><button class="s ${UI.mode==='sub'?'on':''}" data-mode="sub">➖ 扣點</button></div>
       <div class="muted">點數</div>
       <div class="amts">${[1,2,3,5,10].map(n=>`<button class="chip ${UI.amt==n?'on':''}" data-amt="${n}">${n}</button>`).join('')}
         <input id="amtIn" type="number" min="1" value="${UI.amt}" style="width:80px;flex:none"></div>
       <div class="muted">原因（點選常用或自行輸入）</div>
       <div class="filters" style="margin:6px 0">${P.map(p=>`<button class="chip ${UI.mode}" data-preset="${esc(p)}">${esc(p)}</button>`).join('')}</div>
-      <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
+      <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">幫 ${esc(k.name)} ${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
     </div>`;
   }
 
   // 獎品
   h+=`<div class="card"><h2>🎁 獎品兌換區</h2>`;
   if(!S.rewards.length) h+=`<p class="muted">還沒有獎品，家長可以在 ⚙️ 新增。</p>`;
-  else h+=`<div class="grid">${S.rewards.map(r=>{const ok=bal>=r.cost;return `<div class="rw ${ok?'ready':''}">${ok?'<span class="tag">可兌換</span>':''}
-      <div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div>
-      ${!ok?`<div class="bar"><i style="width:${Math.min(100,bal/r.cost*100)}%"></i></div>`:''}
-      ${UI.parent?`<button class="btn sm ${ok?'pri':''}" ${ok?'':'disabled style="opacity:.5"'} data-redeem="${r.id}">兌換</button>`:''}</div>`}).join('')}</div>`;
+  else h+=`<div class="grid">${S.rewards.map(r=>{
+      const readyKids=S.kids.filter(x=>(x.balance||0)>=r.cost);
+      const anyOk=readyKids.length>0;
+      return `<div class="rw ${anyOk?'ready':''}">${anyOk?`<span class="tag">${readyKids.map(x=>esc(x.name)).join('、')}可換</span>`:''}
+        <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div></div>
+        ${UI.parent?`<div class="rw-btns">${S.kids.map(x=>{const ok=(x.balance||0)>=r.cost;return `<button class="btn sm ${ok?'pri':''}" ${ok?'':'disabled style="opacity:.45"'} data-redeem="${r.id}" data-rkid="${x.id}">${esc(x.name)}換</button>`;}).join('')}</div>`:''}</div>`;
+    }).join('')}</div>`;
   h+=`</div>`;
 
-  // 紀錄
-  const mine=S.logs.filter(l=>l.kidId===k.id&&(UI.filter==='all'||l.type===UI.filter));
+  // 紀錄（預設同一頁顯示所有孩子，可篩選單一孩子）
+  const kidMap=Object.fromEntries(S.kids.map(x=>[x.id,x.name]));
+  const mine=S.logs.filter(l=>(UI.logKid==='all'||l.kidId===UI.logKid)&&(UI.filter==='all'||l.type===UI.filter));
   h+=`<div class="card"><h2>📒 點數紀錄</h2>
+    <div class="filters"><button class="chip ${UI.logKid==='all'?'on':''}" data-logkid="all">全部孩子</button>${S.kids.map(x=>`<button class="chip ${UI.logKid===x.id?'on':''}" data-logkid="${x.id}">${esc(x.name)}</button>`).join('')}</div>
     <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
-    ${mine.length?`<ul class="log">${mine.slice(0,100).map(l=>{const who=whoOf(l);return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
-      <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
+    ${mine.length?`<ul class="log">${mine.slice(0,100).map(l=>{const who=whoOf(l),kname=kidMap[l.kidId]||'';return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
+      <span class="t"><b>${kname?`<span class="kid-tag">${esc(kname)}</span>`:''}${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
       ${UI.parent?`<button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button>`:''}</li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
   </div>`;
   app.innerHTML=h+modalHtml();
@@ -367,17 +368,18 @@ function modalHtml(){
 
 /* ---------- 事件 ---------- */
 document.addEventListener('click',async e=>{
-  const t=e.target.closest('[data-act],[data-kid],[data-mode],[data-amt],[data-preset],[data-filter],[data-redeem],[data-undo],[data-pin],[data-kdel],[data-rdel],[data-avdel],[data-close]');
+  const t=e.target.closest('[data-act],[data-kid],[data-logkid],[data-mode],[data-amt],[data-preset],[data-filter],[data-redeem],[data-undo],[data-pin],[data-kdel],[data-rdel],[data-avdel],[data-close]');
   if(!t) return;
   const d=t.dataset;
   if(d.close&&e.target!==t) return;
   if(d.close){UI.modal=null;UI.pinBuf='';return render();}
-  if(d.kid){UI.kid=d.kid;UI.filter='all';return render();}
+  if(d.kid){UI.kid=d.kid;return render();}
+  if(d.logkid){UI.logKid=d.logkid;return render();}
   if(d.mode){UI.mode=d.mode;UI.reason='';return render();}
   if(d.amt){UI.amt=+d.amt;keepReason();return render();}
   if(d.preset){UI.reason=d.preset;return render();}
   if(d.filter){UI.filter=d.filter;return render();}
-  if(d.redeem) return redeem(d.redeem);
+  if(d.redeem) return redeem(d.redeem,d.rkid);
   if(d.undo) return undoLog(d.undo);
   if(d.pin!==undefined){
     const v=d.pin; if(v==='C')UI.pinBuf=''; else if(v==='⌫')UI.pinBuf=UI.pinBuf.slice(0,-1); else if(UI.pinBuf.length<4)UI.pinBuf+=v;
@@ -406,7 +408,7 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='reasonIn') UI.reason=e.target.value;
-  if(e.target.id==='amtIn'){const v=parseInt(e.target.value);if(v>0){UI.amt=v;const b=$('[data-act=points]');if(b)b.textContent=`${UI.mode==='add'?'加':'扣'} ${v} 點`;}}
+  if(e.target.id==='amtIn'){const v=parseInt(e.target.value);if(v>0){UI.amt=v;const k=curKid(),b=$('[data-act=points]');if(b)b.textContent=`幫 ${k?k.name:''} ${UI.mode==='add'?'加':'扣'} ${v} 點`;}}
 });
 document.addEventListener('change',async e=>{
   if(e.target.id==='importIn'&&e.target.files[0]){ return importBackup(e.target.files[0]); }
