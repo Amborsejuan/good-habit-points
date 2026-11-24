@@ -345,26 +345,25 @@ function _render(){
       <button class="btn pri" data-act="${UI.parent?'settings':'lock'}">${UI.parent?'⚙️ 新增孩子':'🔒 進入家長模式'}</button></div>`;
     app.innerHTML=h+modalHtml(); return;
   }
-  // 所有孩子的點數卡（同一頁並排顯示，點卡片可直接選取操作對象）
-  h+=`<div class="kids-grid">${S.kids.map(x=>{
+  const renderHero=x=>{
     const bal=x.balance||0;
     const next=S.rewards.find(r=>r.cost>bal);
     const lastLog=S.logs.find(l=>l.kidId===x.id);
-    const active=UI.parent&&x.id===k.id;
-    return `<div class="card hero ${active?'active-kid':''}" data-kid="${x.id}">${face(x,lastLog&&lastLog.delta<0&&lastLog.type!=='redeem'?'sad':'happy')}
-      <div class="bal"><div class="label">${esc(x.name)} 目前點數${active?'<span class="kid-badge">操作中</span>':''}</div><div class="num" data-num="${x.id}">${bal}</div>
+    return `<div class="card hero">${face(x,lastLog&&lastLog.delta<0&&lastLog.type!=='redeem'?'sad':'happy')}
+      <div class="bal"><div class="label">${esc(x.name)} 目前點數</div><div class="num" data-num="${x.id}">${bal}</div>
       <div class="sub">累積共獲得 ${x.earned||0} 點</div>
       ${next?`<div class="next">再 ${next.cost-bal} 點就能換 ${esc(next.emoji||'')}${esc(next.name)}</div><div class="bar"><i style="width:${Math.min(100,bal/next.cost*100)}%"></i></div>`:(S.rewards.length?`<div class="next">🎉 所有獎品都可以兌換了！</div>`:'')}
       </div></div>`;
-  }).join('')}</div>`;
+  };
 
-  // 家長加扣點
   if(UI.parent){
+    // ===== 家長模式：按小孩分頁顯示 =====
+    const bal=k.balance||0;
     const P=(cfg().presets[UI.mode]||[]).map(parsePreset);
     const sign=UI.mode==='add'?'+':'−';
-    h+=`<div class="card parent"><h2>✏️ 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
-      <div class="muted" style="margin-bottom:4px">對象孩子</div>
-      <div class="tabs" style="padding:2px 0 8px">${S.kids.map(x=>`<button class="tab ${x.id===k.id?'on':''}" data-kid="${x.id}">${face(x)}${esc(x.name)}</button>`).join('')}<button class="tab" data-act="quickAddKid" style="padding:8px 12px">＋ 新增孩子</button></div>
+    h+=`<div class="tabs">${S.kids.map(x=>`<button class="tab ${x.id===k.id?'on':''}" data-kid="${x.id}">${face(x)}${esc(x.name)}</button>`).join('')}<button class="tab" data-act="quickAddKid" style="padding:8px 12px">＋ 新增孩子</button></div>`;
+    h+=renderHero(k);
+    h+=`<div class="card parent"><h2>✏️ 幫 ${esc(k.name)} 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
       <div class="seg"><button class="a ${UI.mode==='add'?'on':''}" data-mode="add">➕ 加點</button><button class="s ${UI.mode==='sub'?'on':''}" data-mode="sub">➖ 扣點</button></div>
       <div class="muted" style="margin-bottom:4px">選擇項目（自動帶入預設分數）</div>
       <select id="presetSel" style="margin-bottom:8px">
@@ -377,32 +376,47 @@ function _render(){
         <input id="amtIn" type="number" min="1" value="${UI.amt}" style="width:80px;flex:none"></div>
       <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">幫 ${esc(k.name)} ${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
     </div>`;
+
+    h+=`<div class="card"><h2>🎁 ${esc(k.name)} 的獎品兌換區</h2>`;
+    if(!S.rewards.length) h+=`<p class="muted">還沒有獎品，家長可以在 ⚙️ 新增。</p>`;
+    else h+=`<div class="grid">${S.rewards.map(r=>{const ok=bal>=r.cost;return `<div class="rw ${ok?'ready':''}">${ok?'<span class="tag">可兌換</span>':''}
+        <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div>
+        ${!ok?`<div class="bar"><i style="width:${Math.min(100,bal/r.cost*100)}%"></i></div>`:''}</div>
+        <button class="btn sm ${ok?'pri':''}" style="margin-top:8px;width:100%${ok?'':';opacity:.45'}" ${ok?'':'disabled'} data-redeem="${r.id}" data-rkid="${k.id}">幫 ${esc(k.name)} 兌換</button></div>`;}).join('')}</div>`;
+    h+=`</div>`;
+
+    const mine=S.logs.filter(l=>l.kidId===k.id&&(UI.filter==='all'||l.type===UI.filter));
+    h+=`<div class="card"><h2>📒 ${esc(k.name)} 的點數紀錄</h2>
+      <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
+      ${mine.length?`<ul class="log">${mine.slice(0,100).map(l=>{const who=whoOf(l);return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
+        <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
+        <button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button></li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
+    </div>`;
+  } else {
+    // ===== 非家長模式：維持原樣（所有孩子同頁並排、紀錄分格顯示） =====
+    h+=`<div class="kids-grid">${S.kids.map(renderHero).join('')}</div>`;
+
+    h+=`<div class="card"><h2>🎁 獎品兌換區</h2>`;
+    if(!S.rewards.length) h+=`<p class="muted">還沒有獎品，家長可以在 ⚙️ 新增。</p>`;
+    else h+=`<div class="grid">${S.rewards.map(r=>{
+        const readyKids=S.kids.filter(x=>(x.balance||0)>=r.cost);
+        const anyOk=readyKids.length>0;
+        return `<div class="rw ${anyOk?'ready':''}">${anyOk?`<span class="tag">${readyKids.map(x=>esc(x.name)).join('、')}可換</span>`:''}
+          <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div></div></div>`;
+      }).join('')}</div>`;
+    h+=`</div>`;
+
+    h+=`<div class="card"><h2>📒 點數紀錄</h2>
+      <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
+      <div class="logs-grid">${S.kids.map(x=>{
+        const mine=S.logs.filter(l=>l.kidId===x.id&&(UI.filter==='all'||l.type===UI.filter));
+        return `<div class="log-col"><h3>${face(x)}${esc(x.name)} 的點數紀錄</h3>
+          ${mine.length?`<ul class="log">${mine.slice(0,50).map(l=>{const who=whoOf(l);return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
+            <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span></li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
+        </div>`;
+      }).join('')}</div>
+    </div>`;
   }
-
-  // 獎品
-  h+=`<div class="card"><h2>🎁 獎品兌換區</h2>`;
-  if(!S.rewards.length) h+=`<p class="muted">還沒有獎品，家長可以在 ⚙️ 新增。</p>`;
-  else h+=`<div class="grid">${S.rewards.map(r=>{
-      const readyKids=S.kids.filter(x=>(x.balance||0)>=r.cost);
-      const anyOk=readyKids.length>0;
-      return `<div class="rw ${anyOk?'ready':''}">${anyOk?`<span class="tag">${readyKids.map(x=>esc(x.name)).join('、')}可換</span>`:''}
-        <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div></div>
-        ${UI.parent?`<div class="rw-btns">${S.kids.map(x=>{const ok=(x.balance||0)>=r.cost;return `<button class="btn sm ${ok?'pri':''}" ${ok?'':'disabled style="opacity:.45"'} data-redeem="${r.id}" data-rkid="${x.id}">${esc(x.name)}換</button>`;}).join('')}</div>`:''}</div>`;
-    }).join('')}</div>`;
-  h+=`</div>`;
-
-  // 紀錄（每位孩子分格並排顯示，清晰不混雜）
-  h+=`<div class="card"><h2>📒 點數紀錄</h2>
-    <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
-    <div class="logs-grid">${S.kids.map(x=>{
-      const mine=S.logs.filter(l=>l.kidId===x.id&&(UI.filter==='all'||l.type===UI.filter));
-      return `<div class="log-col"><h3>${face(x)}${esc(x.name)} 的點數紀錄</h3>
-        ${mine.length?`<ul class="log">${mine.slice(0,50).map(l=>{const who=whoOf(l);return `<li><span class="d ${l.type==='redeem'?'r':l.delta>0?'p':'m'}">${l.delta>0?'+':''}${l.delta}</span>
-          <span class="t"><b>${esc(l.reason)}</b><small>${fmt(l.ts)}${who?`・<span class="who">👤 ${esc(who)}</span>`:''}・餘 ${l.balanceAfter} 點</small></span>
-          ${UI.parent?`<button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button>`:''}</li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
-      </div>`;
-    }).join('')}</div>
-  </div>`;
   app.innerHTML=h+modalHtml();
 }
 
