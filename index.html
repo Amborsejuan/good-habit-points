@@ -118,7 +118,40 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
 @keyframes pop{40%{transform:scale(1.25)}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700;z-index:98;font-size:14px}
 .sec-title{font-weight:900;margin:14px 0 6px}
-@media(max-width:520px){.kids-grid,.logs-grid{grid-template-columns:1fr}.hero .mascot{width:96px;height:96px}.hero .num{font-size:52px}body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num,body[data-theme=pochacco] .hero .num,body[data-theme=cinnamoroll] .hero .num{font-size:62px}}
+@media(max-width:520px){
+  .kids-grid,.logs-grid{grid-template-columns:1fr}
+  .hero .mascot{width:96px;height:96px}
+  .hero .num{font-size:52px}
+  body[data-theme=comic] .hero .num,body[data-theme=snoopy] .hero .num,body[data-theme=pochacco] .hero .num,body[data-theme=cinnamoroll] .hero .num{font-size:62px}
+  /* 非家長模式：手機精巧緊湊版面 */
+  body:not(.is-parent) .wrap{padding:10px 10px 64px}
+  body:not(.is-parent) header{margin-bottom:8px}
+  body:not(.is-parent) header h1{font-size:18px !important;line-height:1.2}
+  body:not(.is-parent) .card{padding:11px;margin-bottom:10px;border-radius:16px}
+  body:not(.is-parent) h2{font-size:17px !important;margin-bottom:8px}
+  body:not(.is-parent) .kids-grid{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+  body:not(.is-parent) .kids-grid .hero{flex-direction:column;text-align:center;gap:4px;padding:10px 8px 18px}
+  body:not(.is-parent) .kids-grid .hero .mascot{width:64px;height:64px}
+  body:not(.is-parent) .kids-grid .hero .label{font-size:13px}
+  body:not(.is-parent) .kids-grid .hero .num{font-size:44px !important;-webkit-text-stroke:1.5px #1d1d1d}
+  body:not(.is-parent) .kids-grid .hero .sub{font-size:11px;margin-top:2px}
+  body:not(.is-parent) .kids-grid .hero .next{font-size:11px;margin-top:4px}
+  body:not(.is-parent) .kids-grid .hero .bar{height:8px;margin-top:4px}
+  body:not(.is-parent) .grid{grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px}
+  body:not(.is-parent) .rw{padding:8px;border-radius:12px}
+  body:not(.is-parent) .rw .em{font-size:28px}
+  body:not(.is-parent) .rw .nm{font-size:13px;margin:2px 0}
+  body:not(.is-parent) .rw .cs{font-size:13px}
+  body:not(.is-parent) .chip{padding:4px 10px;font-size:12px}
+  body:not(.is-parent) .logs-grid{gap:8px;margin-top:8px}
+  body:not(.is-parent) .log-col{padding:9px;border-radius:12px}
+  body:not(.is-parent) .log-col h3{font-size:14px;margin-bottom:6px;padding-bottom:4px}
+  body:not(.is-parent) .log-col h3 svg,body:not(.is-parent) .log-col h3 img{width:22px;height:22px}
+  body:not(.is-parent) .log li{gap:8px;padding:6px 2px}
+  body:not(.is-parent) .log .d{min-width:42px;font-size:13px;padding:3px 0;border-radius:8px}
+  body:not(.is-parent) .log .t b{font-size:13px}
+  body:not(.is-parent) .log .t small{font-size:11px}
+}
 </style>
 </head>
 <body data-theme="pochacco">
@@ -328,6 +361,7 @@ function _render(){
   const app=$('#app'); const k=curKid();
   const th=k?.theme||'pochacco';
   document.body.dataset.theme=th;
+  document.body.classList.toggle('is-parent',!!UI.parent);
   if(k) UI.kid=k.id;
   if(AUTH.state!=='in'){ app.innerHTML=authHtml(); return; }
   const loading=db&&!(S.ready.c&&S.ready.k&&S.ready.r&&S.ready.l);
