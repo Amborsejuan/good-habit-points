@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffd166">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="集點樂園">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" type="image/png" href="./icon-192.png">
 <title>好習慣集點樂園</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -118,6 +125,34 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
 @keyframes pop{40%{transform:scale(1.25)}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-weight:700;z-index:98;font-size:14px}
 .sec-title{font-weight:900;margin:14px 0 6px}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 2px}
+.r-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;border:1.5px solid #1d1d1d;background:#fff3c4;color:#1d1d1d}
+.s-badge{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:900;padding:2px 8px;border-radius:99px;border:1.5px solid #1d1d1d;background:#ff6b4a;color:#fff}
+.daily-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;margin-top:8px}
+.daily-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);cursor:pointer;font-weight:700;font-size:13px;text-align:left;color:var(--ink);font-family:inherit}
+.daily-item.done{background:#d8f5e8;border-color:var(--ok);color:#175c46;text-decoration:line-through;opacity:.85}
+.daily-item .chk{width:20px;height:20px;border-radius:6px;border:2px solid #1d1d1d;background:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:13px}
+.daily-item.done .chk{background:var(--ok);color:#fff;border-color:var(--ok)}
+.daily-mini{font-size:11px;font-weight:700;color:var(--ok);margin-top:4px}
+.apply-all{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;padding:6px 10px;border-radius:10px;border:2px solid var(--line);background:var(--bg);cursor:pointer;margin-bottom:8px;user-select:none}
+.apply-all.on{background:var(--pri2);color:#1d1d1d}
+.v-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:8px}
+.voucher{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:2.5px dashed #1d1d1d;background:linear-gradient(135deg,#fffdf2,#fff3cc);position:relative}
+.voucher.used{background:#f1efe9;opacity:.65;border-style:dotted}
+.voucher .vem{font-size:28px;flex:none}
+.voucher .vt{flex:1;min-width:0}
+.voucher .vt b{display:block;font-size:14px}
+.voucher .vt small{color:var(--muted);font-size:11px}
+.goal-btn{margin-top:6px;font-size:11px;padding:4px 8px;border-radius:99px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-weight:700;color:var(--ink);font-family:inherit}
+.goal-btn.on{background:var(--pri2);border-color:#1d1d1d}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.stat-box{background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:12px}
+.stat-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;margin:8px 0}
+.stat-nums div{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 4px}
+.stat-nums b{display:block;font-size:18px;font-weight:900}
+.stat-nums small{font-size:11px;color:var(--muted)}
+.stat-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.confetti{position:fixed;pointer-events:none;width:10px;height:14px;border-radius:2px;z-index:99;animation:fly 1.3s ease-out forwards}
 @media(max-width:520px){
   .kids-grid,.logs-grid{grid-template-columns:1fr}
   .hero .mascot{width:96px;height:96px}
@@ -132,6 +167,8 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
   body:not(.is-parent) .kids-grid{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
   body:not(.is-parent) .kids-grid .hero{flex-direction:column;text-align:center;gap:4px;padding:10px 8px 18px}
   body:not(.is-parent) .kids-grid .hero .mascot{width:64px;height:64px}
+  body:not(.is-parent) .kids-grid .hero .badges{justify-content:center}
+  body:not(.is-parent) .kids-grid .hero .r-badge,body:not(.is-parent) .kids-grid .hero .s-badge{font-size:10px;padding:1px 6px}
   body:not(.is-parent) .kids-grid .hero .label{font-size:13px}
   body:not(.is-parent) .kids-grid .hero .num{font-size:44px !important;-webkit-text-stroke:1.5px #1d1d1d}
   body:not(.is-parent) .kids-grid .hero .sub{font-size:11px;margin-top:2px}
@@ -205,11 +242,68 @@ const THEMES={pochacco:'🐶 帕洽狗',snoopy:'🐾 史努比',cloud:'☁️ �
 const THEME_TITLES={pochacco:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',cinnamoroll:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',snoopy:'🐾 GOOD HABIT POINTS! 好習慣集點樂園',comic:'GOOD HABIT POINTS!',cloud:'好習慣集點樂園'};
 
 /* ---------- 狀態 ---------- */
-const DEFAULT_CONFIG={pin:'0000',presets:{
+const DEFAULT_CONFIG={pin:'0000',dailyBonus:2,dailyTasks:['準時早起出門:2','自己刷牙洗臉:1','整理玩具書包:1','主動完成功課:2','準時上床睡覺:2'],presets:{
   add:['準時早起出門:2','自己刷牙洗臉:1','整理玩具書包:1','主動完成功課:2','準時上床睡覺:2','幫忙做家事:2','吃完飯不挑食:1','有禮貌說謝謝:1'],
   sub:['晚起拖拉出門遲到:2','超過3C時間:2','亂發脾氣哭鬧:2','打架/推人:3','說謊:3','拖拖拉拉沒收東西:1']
 }};
 function parsePreset(s){const m=String(s||'').match(/^(.*?)[:：]\s*(\d+)\s*$/);return m?{text:m[1].trim(),pts:Math.max(1,parseInt(m[2])||1)}:{text:String(s||'').trim(),pts:null};}
+const todayStr=(ts=Date.now())=>{const d=new Date(ts);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+function rankOf(earned){
+  const e=earned||0;
+  if(e>=400) return {icon:'🚀',name:'傳奇大明星'};
+  if(e>=200) return {icon:'👑',name:'超級小英雄'};
+  if(e>=100) return {icon:'🏅',name:'集點達人'};
+  if(e>=50)  return {icon:'🌟',name:'習慣小隊長'};
+  if(e>=20)  return {icon:'⭐',name:'乖寶寶見習生'};
+  return {icon:'🌱',name:'集點新手'};
+}
+function streakOf(kidId){
+  const byDay={};
+  for(const l of S.logs){
+    if(l.kidId!==kidId) continue;
+    const d=todayStr(l.ts);
+    if(!byDay[d]) byDay[d]={add:0,sub:0};
+    if(l.type==='add') byDay[d].add++;
+    else if(l.type==='sub') byDay[d].sub++;
+  }
+  const today=todayStr();
+  if(byDay[today]&&byDay[today].sub>0) return 0;
+  let streak=0, cur=new Date();
+  if(!(byDay[today]&&byDay[today].add>0)) cur.setDate(cur.getDate()-1);
+  for(let i=0;i<365;i++){
+    const key=todayStr(cur.getTime());
+    if(byDay[key]&&byDay[key].add>0&&byDay[key].sub===0){ streak++; cur.setDate(cur.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+function dailyState(kid){
+  const t=todayStr();
+  if(kid&&kid.daily&&kid.daily.date===t) return {date:t,done:Array.isArray(kid.daily.done)?kid.daily.done:[],bonusGiven:!!kid.daily.bonusGiven};
+  return {date:t,done:[],bonusGiven:false};
+}
+let MUTE=localStorage.getItem('habit_points_mute')==='1';
+function toggleMute(){MUTE=!MUTE;localStorage.setItem('habit_points_mute',MUTE?'1':'0');toast(MUTE?'🔇 已靜音':'🔊 已開啟音效');render();}
+let AC=null;
+function playSound(kind){
+  if(MUTE) return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    const notes=kind==='sub'?[330,262]:kind==='redeem'||kind==='bonus'?[523,659,784,988,1047]:[523,659,784,1047];
+    notes.forEach((freq,i)=>{
+      const o=AC.createOscillator(), g=AC.createGain();
+      o.type=kind==='sub'?'triangle':'sine';
+      o.frequency.value=freq;
+      const t0=AC.currentTime+i*(kind==='sub'?0.11:0.07);
+      g.gain.setValueAtTime(0.001,t0);
+      g.gain.exponentialRampToValueAtTime(0.16,t0+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,t0+(kind==='sub'?0.18:0.22));
+      o.connect(g); g.connect(AC.destination);
+      o.start(t0); o.stop(t0+0.25);
+    });
+  }catch(_){}
+}
 const BIO_KEY='habit_points_bio_cred_v1';
 const bioSupported=()=>!!(window.PublicKeyCredential&&navigator.credentials&&(location.protocol==='https:'||location.hostname==='localhost'));
 const hasBio=()=>!!localStorage.getItem(BIO_KEY);
@@ -273,8 +367,8 @@ function checkParentTimeout(){
 }
 setInterval(checkParentTimeout,1000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) checkParentTimeout(); });
-let S={config:null,kids:[],rewards:[],logs:[],avatars:{},ready:{c:false,k:false,r:false,l:false}};
-let UI={kid:null,parent:false,parentUntil:0,mode:'add',amt:1,reason:'',filter:'all',logKid:'all',modal:null,pinBuf:'',edit:null};
+let S={config:null,kids:[],rewards:[],logs:[],vouchers:[],avatars:{},ready:{c:false,k:false,r:false,l:false}};
+let UI={kid:null,parent:false,parentUntil:0,mode:'add',amt:1,reason:'',applyAll:false,filter:'all',logKid:'all',statRange:7,showUsedV:false,modal:null,pinBuf:'',edit:null};
 let db=null, offline=false, loadTimer=null, slow=false;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -282,6 +376,8 @@ const cfg=()=>{
   const c=Object.assign({},DEFAULT_CONFIG,S.config||{});
   const hasPts=arr=>Array.isArray(arr)&&arr.some(s=>/[:：]\s*\d+\s*$/.test(String(s||'')));
   if(!c.presets||(!hasPts(c.presets.add)&&!hasPts(c.presets.sub))) c.presets=DEFAULT_CONFIG.presets;
+  if(!Array.isArray(c.dailyTasks)||!c.dailyTasks.length) c.dailyTasks=DEFAULT_CONFIG.dailyTasks;
+  if(!(c.dailyBonus>=0)) c.dailyBonus=DEFAULT_CONFIG.dailyBonus;
   return c;
 };
 const curKid=()=>S.kids.find(k=>k.id===UI.kid)||S.kids[0];
@@ -290,8 +386,8 @@ let lid=0; const localId=()=>'L'+Date.now().toString(36)+(lid++);
 
 /* ---------- 資料寫入（雲端或本機 localStorage） ---------- */
 const LS_KEY='habit_points_data_v1';
-function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify({config:S.config,kids:S.kids,rewards:S.rewards,logs:S.logs,avatars:S.avatars}));}catch(_){}}
-function loadLocal(){try{const raw=localStorage.getItem(LS_KEY);if(raw){const d=JSON.parse(raw);S.config=d.config||null;S.kids=d.kids||[];S.rewards=d.rewards||[];S.logs=d.logs||[];S.avatars=d.avatars||{};sortAll();return true;}}catch(_){}return false;}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify({config:S.config,kids:S.kids,rewards:S.rewards,logs:S.logs,vouchers:S.vouchers,avatars:S.avatars}));}catch(_){}}
+function loadLocal(){try{const raw=localStorage.getItem(LS_KEY);if(raw){const d=JSON.parse(raw);S.config=d.config||null;S.kids=d.kids||[];S.rewards=d.rewards||[];S.logs=d.logs||[];S.vouchers=d.vouchers||[];S.avatars=d.avatars||{};sortAll();return true;}}catch(_){}return false;}
 async function put(col,id,data){
   if(db){ try{ await db.collection(col).doc(id).set(data);}catch(e){toast(e.code==='permission-denied'?'沒有寫入權限':'儲存失敗，請重試');throw e;} }
   else{ const arr=col==='config'?null:S[col]; if(col==='config'){S.config=data;} else{const i=arr.findIndex(x=>x.id===id); const o={id,...data}; i>=0?arr[i]=o:arr.push(o);} sortAll(); saveLocal(); render(); }
@@ -301,7 +397,7 @@ async function del(col,id){
   else{ S[col]=S[col].filter(x=>x.id!==id); saveLocal(); render(); }
 }
 const newId=col=>db?db.collection(col).doc().id:localId();
-function sortAll(){S.kids.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));S.rewards.sort((a,b)=>a.cost-b.cost);S.logs.sort((a,b)=>b.ts-a.ts);}
+function sortAll(){S.kids.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));S.rewards.sort((a,b)=>a.cost-b.cost);S.logs.sort((a,b)=>b.ts-a.ts);S.vouchers.sort((a,b)=>b.ts-a.ts);}
 
 /* ---------- 業務動作 ---------- */
 const myEmail=()=>(AUTH.user?.email||'').toLowerCase();
@@ -315,21 +411,68 @@ async function changePoints(kid,delta,reason,type,extra={}){
   await put('logs',newId('logs'),{kidId:kid.id,delta,reason,type,balanceAfter:bal,ts:Date.now(),by:actorName(),byEmail:myEmail(),...extra});
 }
 async function doPoints(){
-  const k=curKid(); if(!k)return;
+  const targets=UI.applyAll?S.kids:[curKid()].filter(Boolean);
+  if(!targets.length)return;
   const reason=UI.reason.trim(); if(!reason){toast('請填寫原因');return;}
   const amt=Math.max(1,parseInt(UI.amt)||1);
   const delta=UI.mode==='add'?amt:-amt;
-  await changePoints(k,delta,reason,UI.mode);
+  for(const k of targets) await changePoints(k,delta,reason,UI.mode);
   UI.reason='';
-  if(delta>0){burst(k.theme==='snoopy'?'🐾':(k.theme==='pochacco'||k.theme==='cinnamoroll')?'🐾':'⭐');toast(`${k.name} +${amt} 點！`);} else toast(`${k.name} −${amt} 點`);
+  if(delta>0){playSound('add');burst(targets[0].theme==='snoopy'?'🐾':'⭐',targets.length>1);toast(`${UI.applyAll?'全部孩子':targets[0].name} +${amt} 點！`);}
+  else{playSound('sub');toast(`${UI.applyAll?'全部孩子':targets[0].name} −${amt} 點`);}
+  render();
+  for(const k of targets){const n=$(`[data-num="${k.id}"]`); n&&n.classList.add('pop');}
+}
+async function toggleDaily(kidId,idx){
+  const k=S.kids.find(x=>x.id===kidId); if(!k)return;
+  const tasks=cfg().dailyTasks.map(parsePreset);
+  const t=tasks[idx]; if(!t)return;
+  const ds=dailyState(k);
+  if(ds.done.includes(t.text)){ toast('這項今日已完成囉（如需退回請從下方紀錄按 ↩︎）'); return; }
+  const nextDone=[...ds.done,t.text];
+  const allDone=tasks.every(x=>nextDone.includes(x.text));
+  const bonus=(allDone&&!ds.bonusGiven&&cfg().dailyBonus>0)?cfg().dailyBonus:0;
+  const nextDaily={date:ds.date,done:nextDone,bonusGiven:ds.bonusGiven||bonus>0};
+  const pts=t.pts||1;
+  const bal1=(k.balance||0)+pts;
+  const earned1=(k.earned||0)+pts;
+  const bal2=bal1+bonus;
+  const earned2=earned1+bonus;
+  const {id,...rest}=k;
+  await put('kids',k.id,{...rest,balance:bal2,earned:earned2,daily:nextDaily});
+  await put('logs',newId('logs'),{kidId:k.id,delta:pts,reason:`每日任務：${t.text}`,type:'add',balanceAfter:bal1,ts:Date.now(),by:actorName(),byEmail:myEmail()});
+  if(bonus>0){
+    await put('logs',newId('logs'),{kidId:k.id,delta:bonus,reason:'🎉 今日全勤獎勵',type:'add',balanceAfter:bal2,ts:Date.now()+1,by:actorName(),byEmail:myEmail()});
+    playSound('bonus'); burst('🎉',true); toast(`🎉 ${k.name} 今日全勤達成！額外 +${bonus} 點！`);
+  } else {
+    playSound('add'); burst('⭐'); toast(`${k.name} 完成「${t.text}」+${pts} 點！`);
+  }
   render(); const n=$(`[data-num="${k.id}"]`); n&&n.classList.add('pop');
+}
+async function setGoal(kidId,rid){
+  const k=S.kids.find(x=>x.id===kidId); if(!k)return;
+  const {id,...rest}=k;
+  const nextGoal=k.goalId===rid?null:rid;
+  await put('kids',k.id,{...rest,goalId:nextGoal});
+  toast(nextGoal?`🎯 已設為 ${k.name} 的目標獎品！`:`已取消 ${k.name} 的目標鎖定`);
+  render();
 }
 async function redeem(rid,kidId){
   const k=(kidId&&S.kids.find(x=>x.id===kidId))||curKid(), r=S.rewards.find(x=>x.id===rid); if(!k||!r)return;
   if((k.balance||0)<r.cost){toast(`${k.name} 的點數還不夠喔`);return;}
-  UI.modal={type:'confirm',text:`確定讓 ${k.name} 用 ${r.cost} 點兌換「${r.emoji||''}${r.name}」？`,ok:async()=>{
+  UI.modal={type:'confirm',text:`確定讓 ${k.name} 用 ${r.cost} 點兌換「${r.emoji||''}${r.name}」？\n兌換後會產生一張待使用兌換券。`,ok:async()=>{
     await changePoints(k,-r.cost,`兌換：${r.emoji||''}${r.name}`,'redeem',{rewardId:r.id});
-    UI.modal=null; burst('🎁'); toast('兌換成功！'); render();
+    await put('vouchers',newId('vouchers'),{kidId:k.id,rewardId:r.id,name:r.name,emoji:r.emoji||'🎁',cost:r.cost,ts:Date.now(),used:false,usedAt:null,by:actorName()});
+    UI.modal=null; playSound('redeem'); burst('🎁',true); toast('兌換成功！已產生兌換券 🎟️'); render();
+  }}; render();
+}
+async function useVoucher(vid){
+  const v=S.vouchers.find(x=>x.id===vid); if(!v||v.used)return;
+  const k=S.kids.find(x=>x.id===v.kidId);
+  UI.modal={type:'confirm',text:`確定將 ${k?k.name+' 的':''}「${v.emoji||''}${v.name}」兌換券標記為「已核銷使用」？`,ok:async()=>{
+    const {id,...rest}=v;
+    await put('vouchers',v.id,{...rest,used:true,usedAt:Date.now(),usedBy:actorName()});
+    UI.modal=null; playSound('add'); toast('✅ 兌換券已核銷'); render();
   }}; render();
 }
 async function undoLog(lidv){
@@ -342,11 +485,17 @@ async function undoLog(lidv){
 }
 
 /* ---------- 特效 ---------- */
-function burst(ch){
-  for(let i=0;i<14;i++){const s=document.createElement('div');s.className='burst';s.textContent=ch;
+function burst(ch,mega=false){
+  const count=mega?20:12;
+  for(let i=0;i<count;i++){const s=document.createElement('div');s.className='burst';s.textContent=ch;
     s.style.left=innerWidth/2+'px';s.style.top=innerHeight/3+'px';
-    s.style.setProperty('--x',(Math.random()*360-180)+'px');s.style.setProperty('--y',(Math.random()*-260+40)+'px');s.style.setProperty('--rot',(Math.random()*720-360)+'deg');
-    document.body.appendChild(s);setTimeout(()=>s.remove(),1200);}
+    s.style.setProperty('--x',(Math.random()*380-190)+'px');s.style.setProperty('--y',(Math.random()*-280+40)+'px');s.style.setProperty('--rot',(Math.random()*720-360)+'deg');
+    document.body.appendChild(s);setTimeout(()=>s.remove(),1250);}
+  const cols=['#e63946','#ffd166','#2a9d8f','#5ab2ff','#ff85a1'];
+  for(let i=0;i<(mega?26:12);i++){const c=document.createElement('div');c.className='confetti';
+    c.style.background=cols[i%cols.length]; c.style.left=innerWidth/2+'px'; c.style.top=innerHeight/3+'px';
+    c.style.setProperty('--x',(Math.random()*420-210)+'px');c.style.setProperty('--y',(Math.random()*-320+60)+'px');c.style.setProperty('--rot',(Math.random()*900-450)+'deg');
+    document.body.appendChild(c);setTimeout(()=>c.remove(),1350);}
 }
 let tt; function toast(t){let e=$('.toast');if(!e){e=document.createElement('div');e.className='toast';document.body.appendChild(e);}e.textContent=t;e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',1800);}
 
@@ -366,6 +515,8 @@ function _render(){
   if(AUTH.state!=='in'){ app.innerHTML=authHtml(); return; }
   const loading=db&&!(S.ready.c&&S.ready.k&&S.ready.r&&S.ready.l);
   let h=`<header><h1>${THEME_TITLES[th]||'好習慣集點樂園'}</h1>
+    <button class="btn sm" data-act="toggleMute" title="音效開關">${MUTE?'🔇':'🔊'}</button>
+    <button class="btn sm" data-act="stats" title="統計報表">📊</button>
     <button class="btn sm ${UI.parent?'pri':''}" data-act="lock">${UI.parent?`🔓 家長 <span id="pTimer">${fmtRemain()}</span>`:'🔒 家長'}</button>
     ${UI.parent?'<button class="btn sm" data-act="settings">⚙️</button>':''}</header>`;
   if(UI.parent) h+=`<div class="p-bar ${(UI.parentUntil-Date.now())<=30000?'warn':''}"><span>⏱️ 家長模式還有 <b id="pTimerBar">${fmtRemainCN()}</b> 自動登出</span><button class="btn sm" style="padding:4px 10px" data-act="lock">立即鎖定</button></div>`;
@@ -379,15 +530,36 @@ function _render(){
       <button class="btn pri" data-act="${UI.parent?'settings':'lock'}">${UI.parent?'⚙️ 新增孩子':'🔒 進入家長模式'}</button></div>`;
     app.innerHTML=h+modalHtml(); return;
   }
+  const tasks=cfg().dailyTasks.map(parsePreset);
   const renderHero=x=>{
     const bal=x.balance||0;
-    const next=S.rewards.find(r=>r.cost>bal);
+    const pinned=x.goalId?S.rewards.find(r=>r.id===x.goalId):null;
+    const next=pinned||S.rewards.find(r=>r.cost>bal);
     const lastLog=S.logs.find(l=>l.kidId===x.id);
+    const rk=rankOf(x.earned||0), st=streakOf(x.id), ds=dailyState(x);
+    const doneCnt=tasks.filter(t=>ds.done.includes(t.text)).length;
     return `<div class="card hero">${face(x,lastLog&&lastLog.delta<0&&lastLog.type!=='redeem'?'sad':'happy')}
-      <div class="bal"><div class="label">${esc(x.name)} 目前點數</div><div class="num" data-num="${x.id}">${bal}</div>
+      <div class="bal"><div class="label">${esc(x.name)} 目前點數</div>
+      <div class="badges"><span class="r-badge">${rk.icon} ${rk.name}</span>${st>0?`<span class="s-badge">🔥 連續 ${st} 天</span>`:''}</div>
+      <div class="num" data-num="${x.id}">${bal}</div>
       <div class="sub">累積共獲得 ${x.earned||0} 點</div>
-      ${next?`<div class="next">再 ${next.cost-bal} 點就能換 ${esc(next.emoji||'')}${esc(next.name)}</div><div class="bar"><i style="width:${Math.min(100,bal/next.cost*100)}%"></i></div>`:(S.rewards.length?`<div class="next">🎉 所有獎品都可以兌換了！</div>`:'')}
+      ${tasks.length?`<div class="daily-mini">✅ 今日任務 ${doneCnt}/${tasks.length}${ds.bonusGiven?' 🎉已全勤':''}</div>`:''}
+      ${next?(bal>=next.cost?`<div class="next">🎉 目標「${esc(next.emoji||'')}${esc(next.name)}」可以兌換囉！</div><div class="bar"><i style="width:100%"></i></div>`:`<div class="next">${pinned?'🎯 ':''}再 ${next.cost-bal} 點就能換 ${esc(next.emoji||'')}${esc(next.name)}</div><div class="bar"><i style="width:${Math.min(100,bal/next.cost*100)}%"></i></div>`):(S.rewards.length?`<div class="next">🎉 所有獎品都可以兌換了！</div>`:'')}
       </div></div>`;
+  };
+  const renderVouchers=(kidFilter)=>{
+    const list=S.vouchers.filter(v=>(!kidFilter||v.kidId===kidFilter)&&(UI.showUsedV?true:!v.used));
+    const unusedCnt=S.vouchers.filter(v=>(!kidFilter||v.kidId===kidFilter)&&!v.used).length;
+    const usedCnt=S.vouchers.filter(v=>(!kidFilter||v.kidId===kidFilter)&&v.used).length;
+    if(!unusedCnt&&!usedCnt) return '';
+    const kidMap=Object.fromEntries(S.kids.map(x=>[x.id,x.name]));
+    return `<div class="card"><div class="row" style="margin-bottom:4px"><h2 style="margin:0">🎟️ 兌換券（待用 ${unusedCnt}）</h2>
+      ${usedCnt?`<button class="btn sm ghost" style="flex:none" data-act="toggleUsedV">${UI.showUsedV?'隱藏已核銷':`查看已核銷(${usedCnt})`}</button>`:''}</div>
+      ${list.length?`<div class="v-list">${list.slice(0,30).map(v=>`<div class="voucher ${v.used?'used':''}"><div class="vem">${esc(v.emoji||'🎁')}</div>
+        <div class="vt"><b>${!kidFilter&&kidMap[v.kidId]?`<span class="kid-tag">${esc(kidMap[v.kidId])}</span>`:''}${esc(v.name)}</b>
+        <small>${fmt(v.ts)} 兌換${v.used?`・✅ 已核銷(${v.usedBy||''})`:'・待使用'}</small></div>
+        ${UI.parent&&!v.used?`<button class="btn sm ok" style="flex:none" data-usev="${v.id}">✅ 核銷</button>`:''}</div>`).join('')}</div>`:'<p class="muted">目前沒有待使用的兌換券</p>'}
+    </div>`;
   };
 
   if(UI.parent){
@@ -395,9 +567,16 @@ function _render(){
     const bal=k.balance||0;
     const P=(cfg().presets[UI.mode]||[]).map(parsePreset);
     const sign=UI.mode==='add'?'+':'−';
+    const ds=dailyState(k);
+    const doneCnt=tasks.filter(t=>ds.done.includes(t.text)).length;
     h+=`<div class="tabs">${S.kids.map(x=>`<button class="tab ${x.id===k.id?'on':''}" data-kid="${x.id}">${face(x)}${esc(x.name)}</button>`).join('')}<button class="tab" data-act="quickAddKid" style="padding:8px 12px">＋ 新增孩子</button></div>`;
     h+=renderHero(k);
-    h+=`<div class="card parent"><h2>✏️ 幫 ${esc(k.name)} 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
+    if(tasks.length){
+      h+=`<div class="card"><h2>✅ ${esc(k.name)} 的今日任務打卡 <span class="muted" style="font-size:12px;margin-left:auto">${doneCnt}/${tasks.length}${cfg().dailyBonus>0?`（全勤獎 +${cfg().dailyBonus}）`:''}</span></h2>
+        <div class="daily-list">${tasks.map((t,i)=>{const done=ds.done.includes(t.text);return `<button class="daily-item ${done?'done':''}" data-daily="${k.id}" data-didx="${i}"><span class="chk">${done?'✓':''}</span><span style="flex:1">${esc(t.text)}</span><b>+${t.pts||1}</b></button>`;}).join('')}</div></div>`;
+    }
+    h+=`<div class="card parent"><h2>✏️ 幫 ${UI.applyAll?'全部孩子':esc(k.name)} 加點 / 扣點 <span class="muted" style="font-size:13px;font-weight:700;margin-left:auto">👤 ${esc(actorName())}</span></h2>
+      ${S.kids.length>1?`<button class="apply-all ${UI.applyAll?'on':''}" data-act="toggleApplyAll">${UI.applyAll?'☑️':'⬜'} 同時套用給全部孩子（${S.kids.map(x=>esc(x.name)).join('、')}）</button>`:''}
       <div class="seg"><button class="a ${UI.mode==='add'?'on':''}" data-mode="add">➕ 加點</button><button class="s ${UI.mode==='sub'?'on':''}" data-mode="sub">➖ 扣點</button></div>
       <div class="muted" style="margin-bottom:4px">選擇項目（自動帶入預設分數）</div>
       <select id="presetSel" style="margin-bottom:8px">
@@ -408,16 +587,18 @@ function _render(){
       <div class="muted">點數（已依項目自動帶入，可自由微調）</div>
       <div class="amts">${[1,2,3,5,10].map(n=>`<button class="chip ${UI.amt==n?'on':''}" data-amt="${n}">${n}</button>`).join('')}
         <input id="amtIn" type="number" min="1" value="${UI.amt}" style="width:80px;flex:none"></div>
-      <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">幫 ${esc(k.name)} ${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
+      <div class="row"><input id="reasonIn" placeholder="輸入原因…" value="${esc(UI.reason)}"><button class="btn ${UI.mode==='add'?'ok':'bad'}" style="flex:none" data-act="points">幫 ${UI.applyAll?'全部孩子':esc(k.name)} ${UI.mode==='add'?'加':'扣'} ${UI.amt} 點</button></div>
     </div>`;
 
     h+=`<div class="card"><h2>🎁 ${esc(k.name)} 的獎品兌換區</h2>`;
     if(!S.rewards.length) h+=`<p class="muted">還沒有獎品，家長可以在 ⚙️ 新增。</p>`;
-    else h+=`<div class="grid">${S.rewards.map(r=>{const ok=bal>=r.cost;return `<div class="rw ${ok?'ready':''}">${ok?'<span class="tag">可兌換</span>':''}
+    else h+=`<div class="grid">${S.rewards.map(r=>{const ok=bal>=r.cost, isG=k.goalId===r.id;return `<div class="rw ${ok?'ready':''}">${ok?'<span class="tag">可兌換</span>':''}
         <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div>
         ${!ok?`<div class="bar"><i style="width:${Math.min(100,bal/r.cost*100)}%"></i></div>`:''}</div>
-        <button class="btn sm ${ok?'pri':''}" style="margin-top:8px;width:100%${ok?'':';opacity:.45'}" ${ok?'':'disabled'} data-redeem="${r.id}" data-rkid="${k.id}">幫 ${esc(k.name)} 兌換</button></div>`;}).join('')}</div>`;
+        <div><button class="goal-btn ${isG?'on':''}" data-goal="${r.id}" data-gkid="${k.id}">${isG?'⭐ 目前目標':'🎯 設為目標'}</button>
+        <button class="btn sm ${ok?'pri':''}" style="margin-top:6px;width:100%${ok?'':';opacity:.45'}" ${ok?'':'disabled'} data-redeem="${r.id}" data-rkid="${k.id}">幫 ${esc(k.name)} 兌換</button></div></div>`;}).join('')}</div>`;
     h+=`</div>`;
+    h+=renderVouchers(k.id);
 
     const mine=S.logs.filter(l=>l.kidId===k.id&&(UI.filter==='all'||l.type===UI.filter));
     h+=`<div class="card"><h2>📒 ${esc(k.name)} 的點數紀錄</h2>
@@ -436,9 +617,11 @@ function _render(){
         const readyKids=S.kids.filter(x=>(x.balance||0)>=r.cost);
         const anyOk=readyKids.length>0;
         return `<div class="rw ${anyOk?'ready':''}">${anyOk?`<span class="tag">${readyKids.map(x=>esc(x.name)).join('、')}可換</span>`:''}
-          <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div></div></div>`;
+          <div><div class="em">${esc(r.emoji||'🎁')}</div><div class="nm">${esc(r.name)}</div><div class="cs">${r.cost} 點</div></div>
+          <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:4px">${S.kids.map(x=>{const isG=x.goalId===r.id;return `<button class="goal-btn ${isG?'on':''}" data-goal="${r.id}" data-gkid="${x.id}">${isG?'⭐':'🎯'}${esc(x.name)}</button>`;}).join('')}</div></div>`;
       }).join('')}</div>`;
     h+=`</div>`;
+    h+=renderVouchers(null);
 
     h+=`<div class="card"><h2>📒 點數紀錄</h2>
       <div class="filters">${[['all','全部'],['add','加點'],['sub','扣點'],['redeem','兌換']].map(([v,t])=>`<button class="chip ${UI.filter===v?'on':''}" data-filter="${v}">${t}</button>`).join('')}</div>
@@ -476,6 +659,30 @@ function modalHtml(){
     <button class="btn sm ghost muted" data-act="resetPin" style="margin-top:2px;text-decoration:underline">忘記密碼？重設為 0000</button></div></div>`;
   if(m.type==='confirm') return `<div class="modal"><div class="card"><p style="white-space:pre-line;font-weight:700">${esc(m.text)}</p>
     <div class="row"><button class="btn" data-act="mclose">取消</button><button class="btn pri" data-act="mok">確定</button></div></div></div>`;
+  if(m.type==='stats'){
+    const days=UI.statRange||7;
+    const since=Date.now()-days*86400000;
+    const boxes=S.kids.map(x=>{
+      const rows=S.logs.filter(l=>l.kidId===x.id&&l.ts>=since);
+      let addSum=0,subSum=0,redCnt=0;
+      const reasonCnt={};
+      for(const l of rows){
+        if(l.type==='add') addSum+=l.delta;
+        else if(l.type==='sub') subSum+=Math.abs(l.delta);
+        else if(l.type==='redeem') redCnt++;
+        const key=`${l.type==='sub'?'−':'+'}${l.reason}`;
+        if(!reasonCnt[key]) reasonCnt[key]={label:l.reason,type:l.type,cnt:0,pts:0};
+        reasonCnt[key].cnt++; reasonCnt[key].pts+=l.delta;
+      }
+      const top=Object.values(reasonCnt).sort((a,b)=>b.cnt-a.cnt).slice(0,6);
+      return `<div class="stat-box"><h3 style="margin:0 0 4px;display:flex;align-items:center;gap:6px">${face(x).replace('class="mascot','style="width:28px;height:28px" class="mascot')}${esc(x.name)}</h3>
+        <div class="stat-nums"><div><b style="color:var(--ok)">+${addSum}</b><small>獲得點數</small></div><div><b style="color:var(--bad)">−${subSum}</b><small>扣除點數</small></div><div><b style="color:var(--pri)">${redCnt}</b><small>兌換次數</small></div></div>
+        ${top.length?top.map(r=>`<div class="stat-row"><span>${esc(r.label)}</span><b>×${r.cnt} (${r.pts>0?'+':''}${r.pts})</b></div>`).join(''):'<p class="muted" style="margin:4px 0">這段期間還沒有紀錄</p>'}</div>`;
+    }).join('');
+    return `<div class="modal" data-close="1"><div class="card" style="max-width:560px"><div class="row"><h2 style="margin:0">📊 集點統計報表</h2><button class="btn sm ghost" style="flex:none" data-act="mclose">✕</button></div>
+      <div class="filters" style="margin-top:8px"><button class="chip ${days===7?'on':''}" data-statrange="7">本週（近 7 天）</button><button class="chip ${days===30?'on':''}" data-statrange="30">本月（近 30 天）</button></div>
+      <div class="stat-grid">${boxes||'<p class="muted">尚無孩子資料</p>'}</div></div></div>`;
+  }
   if(m.type==='settings'){
     const c=cfg();
     return `<div class="modal" data-close="1"><div class="card"><div class="row"><h2 style="margin:0">⚙️ 家長設定</h2><button class="btn sm ghost" style="flex:none" data-act="mclose">✕</button></div>
@@ -489,6 +696,8 @@ function modalHtml(){
     <div class="row"><input id="newREmoji" placeholder="🎁" style="width:54px;flex:none"><input id="newRName" placeholder="獎品名稱"><input id="newRCost" type="number" placeholder="點數" style="width:74px;flex:none"><button class="btn sm pri" style="flex:none" data-act="addReward">新增</button></div>
     <div class="sec-title" style="display:flex;align-items:center;justify-content:space-between"><span>➕ 常用加點原因（可加 :點數）</span><button class="btn sm" data-act="loadDefaultPresets">套用預設分數</button></div><textarea id="presetAdd" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.add.join('\n'))}</textarea>
     <div class="sec-title">➖ 常用扣點原因（可加 :點數，如：晚起拖拉出門遲到:2）</div><textarea id="presetSub" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.presets.sub.join('\n'))}</textarea>
+    <div class="sec-title">✅ 每日任務打卡項目（每行一個，格式 任務:點數）</div><textarea id="dailyTasksIn" rows="4" style="width:100%;box-sizing:border-box;font:inherit;border-radius:12px;padding:8px">${esc(c.dailyTasks.join('\n'))}</textarea>
+    <div class="row" style="margin-top:6px"><span class="muted" style="flex:none">🎉 今日全勤額外獎勵點數</span><input id="dailyBonusIn" type="number" min="0" value="${c.dailyBonus}" style="width:80px;flex:none"></div>
     <div class="sec-title">🔑 家長密碼（4 位數字，儲存後全家同步生效）</div>
     <div class="row"><input id="pinIn" inputmode="numeric" maxlength="4" placeholder="請輸入 4 位數字" value="${esc(c.pin)}"><button class="btn sm pri" style="flex:none" data-act="savePin">儲存密碼</button></div>
     <div class="sec-title">🪪 Face ID / 指紋快速解鎖（此裝置專屬）</div>
@@ -506,7 +715,7 @@ function modalHtml(){
 
 /* ---------- 事件 ---------- */
 document.addEventListener('click',async e=>{
-  const t=e.target.closest('[data-act],[data-kid],[data-logkid],[data-mode],[data-amt],[data-preset],[data-filter],[data-redeem],[data-undo],[data-pin],[data-kdel],[data-rdel],[data-avdel],[data-close]');
+  const t=e.target.closest('[data-act],[data-kid],[data-logkid],[data-mode],[data-amt],[data-preset],[data-filter],[data-redeem],[data-undo],[data-pin],[data-kdel],[data-rdel],[data-avdel],[data-daily],[data-goal],[data-usev],[data-statrange],[data-close]');
   if(!t) return;
   const d=t.dataset;
   if(d.close&&e.target!==t) return;
@@ -517,6 +726,10 @@ document.addEventListener('click',async e=>{
   if(d.amt){UI.amt=+d.amt;keepReason();return render();}
   if(d.preset){UI.reason=d.preset;if(d.ppts)UI.amt=+d.ppts;return render();}
   if(d.filter){UI.filter=d.filter;return render();}
+  if(d.statrange){UI.statRange=+d.statrange;return render();}
+  if(d.daily) return toggleDaily(d.daily,+d.didx);
+  if(d.goal) return setGoal(d.gkid,d.goal);
+  if(d.usev) return useVoucher(d.usev);
   if(d.redeem) return redeem(d.redeem,d.rkid);
   if(d.undo) return undoLog(d.undo);
   if(d.pin!==undefined){
@@ -538,6 +751,10 @@ document.addEventListener('click',async e=>{
     case 'addKid': return addKid();
     case 'addReward': return addReward();
     case 'savePin': return savePin();
+    case 'toggleMute': return toggleMute();
+    case 'stats': UI.modal={type:'stats'}; return render();
+    case 'toggleApplyAll': UI.applyAll=!UI.applyAll; return render();
+    case 'toggleUsedV': UI.showUsedV=!UI.showUsedV; return render();
     case 'setupBio': return setupBio();
     case 'disableBio': return disableBio();
     case 'unlockBio': return unlockBio();
@@ -552,7 +769,7 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='reasonIn') UI.reason=e.target.value;
-  if(e.target.id==='amtIn'){const v=parseInt(e.target.value);if(v>0){UI.amt=v;const k=curKid(),b=$('[data-act=points]');if(b)b.textContent=`幫 ${k?k.name:''} ${UI.mode==='add'?'加':'扣'} ${v} 點`;}}
+  if(e.target.id==='amtIn'){const v=parseInt(e.target.value);if(v>0){UI.amt=v;const k=curKid(),b=$('[data-act=points]');if(b)b.textContent=`幫 ${UI.applyAll?'全部孩子':(k?k.name:'')} ${UI.mode==='add'?'加':'扣'} ${v} 點`;}}
 });
 document.addEventListener('change',async e=>{
   if(e.target.id==='presetSel'){
@@ -589,7 +806,7 @@ function keepReason(){const r=$('#reasonIn');if(r)UI.reason=r.value;}
 async function savePin(){
   const pin=$('#pinIn').value.trim(); if(!/^\d{4}$/.test(pin)) return toast('密碼需為 4 位數字');
   const c=cfg();
-  await put('config','main',{pin,presets:c.presets,nicknames:c.nicknames||{}});
+  await put('config','main',{pin,presets:c.presets,dailyTasks:c.dailyTasks,dailyBonus:c.dailyBonus,nicknames:c.nicknames||{}});
   toast('家長密碼已更新並儲存！'); render();
 }
 async function saveSettings(){
@@ -600,7 +817,9 @@ async function saveSettings(){
   const nicknames=Object.assign({},cfg().nicknames||{});
   const me=myEmail(), nick=$('#myNick')?.value.trim();
   if(me&&nick) nicknames[me]=nick;
-  await put('config','main',{pin,presets:{add:lines('#presetAdd'),sub:lines('#presetSub')},nicknames});
+  const dailyTasks=lines('#dailyTasksIn');
+  const dailyBonus=Math.max(0,parseInt($('#dailyBonusIn')?.value)||0);
+  await put('config','main',{pin,presets:{add:lines('#presetAdd'),sub:lines('#presetSub')},dailyTasks:dailyTasks.length?dailyTasks:DEFAULT_CONFIG.dailyTasks,dailyBonus,nicknames});
   for(const x of kidEdits) if(x.name!==x.k.name||x.theme!==x.k.theme){const {id,...rest}=x.k;await put('kids',id,{...rest,name:x.name,theme:x.theme});}
   for(const x of rEdits) if(x.name!==x.r.name||x.cost!==x.r.cost||x.emoji!==x.r.emoji){const {id,...rest}=x.r;await put('rewards',id,{...rest,name:x.name,cost:x.cost,emoji:x.emoji});}
   UI.modal=null; toast('設定已儲存'); render();
@@ -640,13 +859,14 @@ window.APP={
     db.collection('avatars').onSnapshot(s=>{const m={};s.docs.forEach(d=>{const v=d.data();if(v&&typeof v.img==='string'&&/^data:image\//.test(v.img))m[d.id]=v.img;});S.avatars=m;if(!keepModal())render();},()=>{});
     sub('rewards','r',db.collection('rewards'));
     sub('logs','l',db.collection('logs').orderBy('ts','desc').limit(1000));
+    db.collection('vouchers').onSnapshot(s=>{S.vouchers=s.docs.map(d=>({id:d.id,...d.data()}));sortAll();if(!keepModal())render();},()=>{});
   }
 };
 
 /* ---------- 備份 ---------- */
 function exportBackup(){
   const data={app:'good-habit-points',version:1,exportedAt:new Date().toISOString(),
-    config:S.config, kids:S.kids, rewards:S.rewards, logs:S.logs, avatars:S.avatars};
+    config:S.config, kids:S.kids, rewards:S.rewards, logs:S.logs, vouchers:S.vouchers, avatars:S.avatars};
   const blob=new Blob([JSON.stringify(data,null,1)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   const d=new Date(); a.download=`points-backup-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
@@ -660,7 +880,7 @@ async function importBackup(file){
     UI.modal=null; render(); toast('匯入中…');
     try{
       if(data.config) await put('config','main',data.config);
-      for(const col of ['kids','rewards','logs']) for(const x of (data[col]||[])){ const {id,...rest}=x; if(id) await put(col,String(id),rest); }
+      for(const col of ['kids','rewards','logs','vouchers']) for(const x of (data[col]||[])){ const {id,...rest}=x; if(id) await put(col,String(id),rest); }
       for(const [id,img] of Object.entries(data.avatars||{})) if(db) await db.collection('avatars').doc(id).set({img,ts:Date.now()});
       toast('匯入完成！');
     }catch(e){ toast('匯入失敗：'+(e.code||e.message)); }

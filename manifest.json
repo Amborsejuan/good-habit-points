@@ -1,0 +1,24 @@
+{
+  "name": "好習慣集點樂園",
+  "short_name": "集點樂園",
+  "description": "史努比與帕洽狗親子好習慣集點系統",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8ea",
+  "theme_color": "#ffd166",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
