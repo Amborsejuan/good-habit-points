@@ -188,6 +188,9 @@ body[data-theme=comic] input,body[data-theme=comic] select,body[data-theme=snoop
   body:not(.is-parent) .log .d{min-width:42px;font-size:13px;padding:3px 0;border-radius:8px}
   body:not(.is-parent) .log .t b{font-size:13px}
   body:not(.is-parent) .log .t small{font-size:11px}
+  body:not(.is-parent) .daily-ro{gap:5px;margin-top:6px}
+  body:not(.is-parent) .daily-ro .daily-item{padding:5px 7px;font-size:12px;gap:6px;border-radius:9px}
+  body:not(.is-parent) .daily-ro .daily-item .chk{width:16px;height:16px;font-size:11px}
 }
 </style>
 </head>
@@ -608,8 +611,18 @@ function _render(){
         <button class="btn sm ghost" data-undo="${l.id}" title="撤銷">↩︎</button></li>`;}).join('')}</ul>`:'<p class="muted">還沒有紀錄</p>'}
     </div>`;
   } else {
-    // ===== 非家長模式：維持原樣（所有孩子同頁並排、紀錄分格顯示） =====
+    // ===== 非家長模式：維持原樣（所有孩子同頁並排、今日任務與紀錄分格顯示） =====
     h+=`<div class="kids-grid">${S.kids.map(renderHero).join('')}</div>`;
+
+    if(tasks.length){
+      h+=`<div class="card"><h2>✅ 今日任務打卡 <span class="muted" style="font-size:12px;margin-left:auto">${cfg().dailyBonus>0?`全勤額外 +${cfg().dailyBonus} 點`:''}</span></h2>
+        <div class="logs-grid">${S.kids.map(x=>{
+          const ds=dailyState(x), doneCnt=tasks.filter(t=>ds.done.includes(t.text)).length;
+          return `<div class="log-col"><h3>${face(x)}${esc(x.name)} <span class="muted" style="font-size:12px;margin-left:auto">${doneCnt}/${tasks.length}${ds.bonusGiven?' 🎉已全勤':''}</span></h3>
+            <div class="daily-list daily-ro" style="grid-template-columns:1fr">${tasks.map(t=>{const done=ds.done.includes(t.text);return `<div class="daily-item ${done?'done':''}" style="cursor:default"><span class="chk">${done?'✓':''}</span><span style="flex:1">${esc(t.text)}</span><b>+${t.pts||1}</b></div>`;}).join('')}</div>
+          </div>`;
+        }).join('')}</div></div>`;
+    }
 
     h+=`<div class="card"><h2>🎁 獎品兌換區</h2>`;
     if(!S.rewards.length) h+=`<p class="muted">還沒有獎品，家長可以在 ⚙️ 新增。</p>`;
